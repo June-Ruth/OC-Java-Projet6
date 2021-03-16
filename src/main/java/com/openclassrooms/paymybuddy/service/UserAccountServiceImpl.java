@@ -99,4 +99,9 @@ public class UserAccountServiceImpl implements UserAccountService {
     public boolean existsConnectionById(int id) {
         return userAccountDAO.existsById(id);
     }
+
+    @Override
+    public UserAccount findUserAccountByEmail(String email) {
+        return userAccountDAO.findByEmail(email);
+    }
 }

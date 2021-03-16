@@ -3,11 +3,7 @@ package com.openclassrooms.paymybuddy.security;
 import com.openclassrooms.paymybuddy.model.Privilege;
 import com.openclassrooms.paymybuddy.model.Role;
 import com.openclassrooms.paymybuddy.model.UserAccount;
-import com.openclassrooms.paymybuddy.repository.RoleDAO;
 import com.openclassrooms.paymybuddy.repository.UserAccountDAO;
-import com.openclassrooms.paymybuddy.service.UserAccountService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -24,17 +20,11 @@ import java.util.List;
 @Transactional
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
     private UserAccountDAO userAccountDAO;
 
-    @Autowired
-    private UserAccountService userAccountService;
-
-    @Autowired
-    private MessageSource messageSource;
-
-    @Autowired
-    private RoleDAO roleDAO;
+    public UserDetailsServiceImpl(final UserAccountDAO userAccountDAO) {
+        this.userAccountDAO = userAccountDAO;
+    }
 
     @Override
     public User loadUserByUsername(final String email) throws UsernameNotFoundException {
@@ -68,5 +58,4 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         return authorities;
     }
-
 }

@@ -1,8 +1,11 @@
 package com.openclassrooms.paymybuddy.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,16 +37,21 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/admin").hasRole("ADMIN")
-                .antMatchers("/users").hasRole("USER")
-                .anyRequest().authenticated()
-                .and()
+        http.csrf().disable()
+                .authorizeRequests()
+                    //.antMatchers("/admin*").hasRole("ADMIN")
+                    //.antMatchers("/users*", "/transfers*").hasRole("USER")
+                    .antMatchers("/login*", "/logout*", "/signup*").permitAll()
+                    //.anyRequest().authenticated()
+                    .and()
                 .formLogin()
-                .and()
+                    .loginPage("/login")
+                    .failureUrl("/login?error=true")
+                    .permitAll()
+                    .and()
                 .logout()
-                .and()
-                .csrf().disable(); // laisser activer si utilise une authentification basée sur les sessions et cookies. Si utilise une authentification stateless comme JWT, alors csrf().disabled;
+                    .logoutSuccessUrl("/logout.html?logSucc=true")
+                    .permitAll();
     }
 
     @Bean

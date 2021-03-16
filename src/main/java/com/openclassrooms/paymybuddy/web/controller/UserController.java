@@ -13,7 +13,14 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
@@ -43,7 +50,7 @@ public class UserController {
     }
 
     //TODO : create user account (and bank account => ok avec Cascade)
-    @PostMapping(value = "/users")
+    @PostMapping(value = "/signup")
     public ResponseEntity<String> createUserAccount(@Valid @RequestBody final UserInfoWithoutBalanceDTO userInfoWithoutBalanceDTO) {
         UserAccount userAccount = DtoConverter.convertUserInfoWithoutBalanceDTOtoUserAccount(userInfoWithoutBalanceDTO, roleDAO.findByName("ROLE_USER"));
         userAccount.setPassword(passwordEncoder.encode(userInfoWithoutBalanceDTO.getPassword()));
@@ -59,7 +66,7 @@ public class UserController {
     }
 
     //TODO : read my own user information
-    @Secured("#contact.name == principal.name")
+    @Secured("#contact.name == principal.username")
     @GetMapping(value = "/users/{user_id}")
     public ResponseEntity<String> getUserAccountInfo(@PathVariable final int user_id) {
         UserAccount userAccount = userAccountService.findUserAccountById(user_id);

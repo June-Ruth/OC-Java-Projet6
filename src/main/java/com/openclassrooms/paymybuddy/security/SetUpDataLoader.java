@@ -7,7 +7,6 @@ import com.openclassrooms.paymybuddy.model.UserAccount;
 import com.openclassrooms.paymybuddy.repository.PrivilegeDAO;
 import com.openclassrooms.paymybuddy.repository.RoleDAO;
 import com.openclassrooms.paymybuddy.repository.UserAccountDAO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,46 +20,65 @@ import java.util.List;
 @Component
 public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
-    boolean alreadySetup = false;
+    private boolean alreadySetup = false;
 
-    @Autowired
     private UserAccountDAO userAccountDAO;
 
-    @Autowired
     private RoleDAO roleDAO;
 
-    @Autowired
     private PrivilegeDAO privilegeDAO;
 
-    @Autowired
     private PasswordEncoder passwordEncoder;
+
+    public SetUpDataLoader(final UserAccountDAO pUserAccountDAO,
+                           final RoleDAO pRoleDAO,
+                           final PrivilegeDAO pPrivilegeDAO,
+                           final PasswordEncoder pPasswordEncoder) {
+        userAccountDAO = pUserAccountDAO;
+        roleDAO = pRoleDAO;
+        privilegeDAO = pPrivilegeDAO;
+        passwordEncoder = pPasswordEncoder;
+    }
 
     @Override
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if(!alreadySetup) {
-            Privilege readPrivilege = createPrivilegeIfNotFound("READ_PRIVILEGE");
-            Privilege writePrivilege = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
+            Privilege readAllData = createPrivilegeIfNotFound("READ_ALL_DATA");
+            Privilege readRestrictedData = createPrivilegeIfNotFound("READ_RESTRICTED_DATA");
+            Privilege writeOwnerData = createPrivilegeIfNotFound("WRITE_OWNER_DATA");
 
             List<Privilege> adminPrivileges = new ArrayList<>();
-            adminPrivileges.add(readPrivilege);
-            adminPrivileges.add(writePrivilege);
+            adminPrivileges.add(readAllData);
             List<Privilege> userPrivileges = new ArrayList<>();
-            userPrivileges.add(readPrivilege);
-            userPrivileges.add(writePrivilege);
+            userPrivileges.add(readRestrictedData);
+            userPrivileges.add(writeOwnerData);
 
             Role adminRole = createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
             Role userRole = createRoleIfNotFound("ROLE_USER", userPrivileges);
 
+
+            // TODO : suppress before ending from here...
             List<Role> roles = new ArrayList<>();
             roles.add(adminRole);
             roles.add(userRole);
             BankAccount bankAccount = new BankAccount("RIB", "Banque", "IBAN", "BIC");
-            UserAccount userAccount = new UserAccount("FirstName", "LastName", "email@test.com", passwordEncoder.encode("password"), roles, bankAccount, 0, new ArrayList<>(), new ArrayList<>());
+            UserAccount userAccount = new UserAccount("FirstName", "LastName", "admin@test.com", passwordEncoder.encode("password"), roles, bankAccount, 0, new ArrayList<>(), new ArrayList<>());
 
             if (!userAccountDAO.existsByEmail(userAccount.getEmail())) {
                 userAccountDAO.save(userAccount);
             }
+
+            List<Role> roles2 = new ArrayList<>();
+            roles2.add(userRole);
+            BankAccount bankAccount2 = new BankAccount("RIB", "Banque", "IBAN", "BIC");
+            UserAccount userAccount2 = new UserAccount("FirstName2", "LastName2", "user@test.com", passwordEncoder.encode("password"), roles2, bankAccount2, 0, new ArrayList<>(), new ArrayList<>());
+
+            if (!userAccountDAO.existsByEmail(userAccount2.getEmail())) {
+                userAccountDAO.save(userAccount2);
+            }
+            //TODO : ... until here.
+
             alreadySetup = true;
         }
     }

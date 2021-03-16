@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS pay_my_buddy.role_profile (
 
 CREATE TABLE IF NOT EXISTS pay_my_buddy.privilege (
     privilege_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    privilege_name VARCHAR(15) NOT NULL UNIQUE,
+    privilege_name VARCHAR(30) NOT NULL UNIQUE,
     PRIMARY KEY (privilege_id)
 ) ENGINE = InnoDB;
 
