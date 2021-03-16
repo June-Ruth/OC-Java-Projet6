@@ -11,7 +11,7 @@ public enum TransferType {
     TRANSFER_BETWEEN_USER,
 
     /**
-     * Transfer between one user and its bank account.
+     * Transfer from one user to its bank account.
      */
     TRANSFER_WITH_BANK
 }

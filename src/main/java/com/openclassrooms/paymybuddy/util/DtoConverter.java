@@ -3,9 +3,11 @@ package com.openclassrooms.paymybuddy.util;
 import com.openclassrooms.paymybuddy.model.Role;
 import com.openclassrooms.paymybuddy.model.Transfer;
 import com.openclassrooms.paymybuddy.model.UserAccount;
+import com.openclassrooms.paymybuddy.model.dto.SendingTransferDTO;
 import com.openclassrooms.paymybuddy.model.dto.UserInfoDTO;
 import com.openclassrooms.paymybuddy.model.dto.UserInfoWithoutBalanceDTO;
 import com.openclassrooms.paymybuddy.model.dto.UserRestrictedInfoDTO;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
