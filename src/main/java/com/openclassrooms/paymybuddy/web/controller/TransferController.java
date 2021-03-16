@@ -12,10 +12,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
 public class TransferController {
+    //TODO : Logger + JavaDoc
     /**
      * @see Logger
      */
@@ -47,9 +49,9 @@ public class TransferController {
 
     //TODO : see les derniers transferts que j'ai effectué en tant que user en version simplifié (voir maquette)
     @GetMapping(value = "/transfers")
-    public List<Transfer> getMyTransfersAsSender() {
-        int user_id = 0;
-        UserAccount userAccount = userAccountService.findUserAccountById(user_id);
+    public List<Transfer> getMyTransfersAsSender(Principal principal) {
+        String email = principal.getName();
+        UserAccount userAccount = userAccountService.findUserAccountByEmail(email);
         List<Transfer> transfers = transferService.findTransferBySender(userAccount);
         return transfers;
     }

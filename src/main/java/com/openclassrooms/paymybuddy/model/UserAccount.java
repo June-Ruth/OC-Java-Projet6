@@ -45,7 +45,7 @@ public class UserAccount {
      */
     @Email(message = "Email should be valid")
     @Size(max = 60, message = "Email must be less than 60 characters")
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     /**
@@ -56,13 +56,24 @@ public class UserAccount {
     private String password;
 
     /**
+     * Security role : User / User and Admin.
+     * @see Role
+     */
+    @NotNull
+    @ManyToMany
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn( name = "user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role_id"))
+    private List<Role> roles;
+
+    /**
      * Associated bank account.
      * @see BankAccount
      */
     @Valid
     @NotNull(message = "Bank account cannot be null")
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "bank_account_rib", nullable = false)
+    @JoinColumn(name = "bank_account_id", nullable = false)
     private BankAccount bankAccount;
 
     /**
@@ -97,6 +108,7 @@ public class UserAccount {
      * @param pLastName .
      * @param pEmail .
      * @param pPassword .
+     * @param pRoles .
      * @param pBankAccount .
      * @param pBalance .
      * @param pConnection .
@@ -106,6 +118,7 @@ public class UserAccount {
                        final String pLastName,
                        final String pEmail,
                        final String pPassword,
+                       final List<Role> pRoles,
                        final BankAccount pBankAccount,
                        final double pBalance,
                        final List<UserAccount> pConnection,
@@ -114,11 +127,14 @@ public class UserAccount {
         lastName = pLastName;
         email = pEmail;
         password = pPassword;
+        roles = pRoles;
         bankAccount = pBankAccount;
         balance = pBalance;
         connection = pConnection;
         transferLog = pTransferLog;
     }
+
+    private UserAccount() { }
 
     /**
      * Getter ID.
@@ -199,6 +215,22 @@ public class UserAccount {
      */
     public void setPassword(final String pPassword) {
         password = pPassword;
+    }
+
+    /**
+     * Getter roles.
+     * @return list of roleProfile
+     */
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    /**
+     * Setter roles.
+     * @param pRoles to set
+     */
+    public void setRoles(List<Role> pRoles) {
+        roles = pRoles;
     }
 
     /**

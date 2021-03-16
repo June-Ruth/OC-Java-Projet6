@@ -1,21 +1,12 @@
 package com.openclassrooms.paymybuddy.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
@@ -85,10 +76,11 @@ public class Transfer {
     @Column(name = "fee")
     private double fee;
 
-    /**
+     /**
      * Type of transfer.
      * @see TransferType
      */
+    @Enumerated(EnumType.STRING)
     @Column(name = "transfer_type")
     private TransferType transferType;
 
@@ -118,6 +110,8 @@ public class Transfer {
         fee = pFee;
         transferType = pTransferType;
     }
+
+    private Transfer() { }
 
     /**
      * Getter ID.

@@ -5,12 +5,22 @@ import com.openclassrooms.paymybuddy.model.UserAccount;
 import com.openclassrooms.paymybuddy.model.dto.UserInfoDTO;
 import com.openclassrooms.paymybuddy.model.dto.UserInfoWithoutBalanceDTO;
 import com.openclassrooms.paymybuddy.model.dto.UserRestrictedInfoDTO;
+import com.openclassrooms.paymybuddy.repository.RoleDAO;
 import com.openclassrooms.paymybuddy.service.UserAccountService;
 import com.openclassrooms.paymybuddy.util.DtoConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
@@ -27,16 +37,23 @@ public class UserController {
     private static final Logger LOGGER = LogManager.getLogger(UserController.class);
 
     private UserAccountService userAccountService;
+    private RoleDAO roleDAO; //TODO : faire passer en service
+    private PasswordEncoder passwordEncoder;
 
-    public UserController(final UserAccountService pUserAccountService) {
+    public UserController(final UserAccountService pUserAccountService,
+                          final RoleDAO pRoleDAO,
+                          final PasswordEncoder pPasswordEncoder) {
         Objects.requireNonNull(pUserAccountService);
         userAccountService = pUserAccountService;
+        roleDAO = pRoleDAO;
+        passwordEncoder = pPasswordEncoder;
     }
 
     //TODO : create user account (and bank account => ok avec Cascade)
-    @PostMapping(value = "/users")
+    @PostMapping(value = "/signup")
     public ResponseEntity<String> createUserAccount(@Valid @RequestBody final UserInfoWithoutBalanceDTO userInfoWithoutBalanceDTO) {
-        UserAccount userAccount = DtoConverter.convertUserInfoWithoutBalanceDTOtoUserAccount(userInfoWithoutBalanceDTO);
+        UserAccount userAccount = DtoConverter.convertUserInfoWithoutBalanceDTOtoUserAccount(userInfoWithoutBalanceDTO, roleDAO.findByName("ROLE_USER"));
+        userAccount.setPassword(passwordEncoder.encode(userInfoWithoutBalanceDTO.getPassword()));
         userAccountService.saveUserAccount(userAccount);
 
         URI location = ServletUriComponentsBuilder
@@ -49,6 +66,7 @@ public class UserController {
     }
 
     //TODO : read my own user information
+    @Secured("#contact.name == principal.username")
     @GetMapping(value = "/users/{user_id}")
     public ResponseEntity<String> getUserAccountInfo(@PathVariable final int user_id) {
         UserAccount userAccount = userAccountService.findUserAccountById(user_id);
@@ -66,7 +84,8 @@ public class UserController {
                                                         @Valid @RequestBody final UserInfoWithoutBalanceDTO userInfoDTO) {
         boolean exists = userAccountService.findUserAccountById(user_id) != null ;
         if (exists) {
-            UserAccount userAccount = DtoConverter.convertUserInfoWithoutBalanceDTOtoUserAccount(userInfoDTO); //voir si pas nécessaire de différencier un existant d'un new
+            UserAccount userAccount = DtoConverter.convertUserInfoWithoutBalanceDTOtoUserAccount(userInfoDTO, roleDAO.findByName("ROLE_USER")); //voir si pas nécessaire de différencier un existant d'un new
+            userAccount.setPassword(passwordEncoder.encode(userInfoDTO.getPassword()));
             userAccountService.updateUserAccount(userAccount);
             return ResponseEntity.ok().body(userAccount.toString());
         } else {

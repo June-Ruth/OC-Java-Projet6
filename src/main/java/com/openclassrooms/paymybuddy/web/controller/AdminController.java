@@ -8,9 +8,11 @@ import com.openclassrooms.paymybuddy.service.UserAccountService;
 import com.openclassrooms.paymybuddy.util.DtoConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,7 @@ public class AdminController {
 
     //TODO ; read all user (ADMIN ONLY)
     @GetMapping(value = "/admin/users")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserInfoDTO> getAllUserAccounts() {
         List<UserAccount> userAccounts = userAccountService.findAllUserAccounts();
 
@@ -43,11 +46,15 @@ public class AdminController {
         return result;
     }
 
-
+    //TODO ; problème de récursion infini
     //TODO : see all transfer (ADMIN ONLY)
     @GetMapping(value = "/admin/transfers")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Transfer> getAllTransfers() {
         List<Transfer> transfers = transferService.findAllTransfers();
         return transfers;
     }
+
+    //TODO : designed an user as admin
+
 }

@@ -28,4 +28,6 @@ public interface UserAccountService {
     List<Transfer> findUserTransfers(int id);
 
     boolean existsConnectionById(int id);
+
+    UserAccount findUserAccountByEmail(String email);
 }
