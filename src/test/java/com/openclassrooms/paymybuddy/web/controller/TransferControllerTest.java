@@ -3,7 +3,6 @@ package com.openclassrooms.paymybuddy.web.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassrooms.paymybuddy.model.*;
 import com.openclassrooms.paymybuddy.model.dto.SendingTransferDTO;
-import com.openclassrooms.paymybuddy.repository.RoleDAO;
 import com.openclassrooms.paymybuddy.service.TransferService;
 import com.openclassrooms.paymybuddy.service.UserAccountService;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,32 +35,28 @@ class TransferControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
+    @Qualifier("userDetailsServiceImpl")
+    private UserDetailsService userDetailsService;
+
+    @MockBean
     private TransferService transferService;
 
     @MockBean
     private UserAccountService userAccountService;
 
-    @MockBean
-    @Qualifier("userDetailsServiceImpl")
-    private UserDetailsService userDetailsService;
-
     private static Transfer transferBetweenUsers;
     private static Transfer transferWithBank;
     private static UserAccount userAccount1User;
     private static UserAccount userAccount2Admin;
-
     private static List<Transfer> transfers = new ArrayList<>();
-
-    private static RoleDAO roleDAO;
 
     @BeforeAll
     static void beforeAll() {
-        List<Role> userRoles = new ArrayList<>();
-        List<Role> adminRoles = new ArrayList<>();
+        List<Role> roles = new ArrayList<>();
         BankAccount bankAccount1 = new BankAccount("123", "bank1", "iban1", "bic1");
         BankAccount bankAccount2 = new BankAccount("456", "bank2", "iban2", "bic2");
-        userAccount1User = new UserAccount("firstName1", "lastName1", "user@test.com",  "password", userRoles, bankAccount1, 0, null, null);
-        userAccount2Admin = new UserAccount("firstName2", "lastName2", "admin@test.com",  "password2", adminRoles, bankAccount2, 0, null, null);
+        userAccount1User = new UserAccount("firstName1", "lastName1", "user@test.com",  "password", roles, bankAccount1, 0, null, null);
+        userAccount2Admin = new UserAccount("firstName2", "lastName2", "admin@test.com",  "password2", roles, bankAccount2, 0, null, null);
         transferBetweenUsers = new Transfer(userAccount1User, userAccount2Admin, "description1", LocalDate.of(2020, 1, 1), 100, 1, TransferType.TRANSFER_BETWEEN_USER);
         transferWithBank = new Transfer(userAccount1User, userAccount1User, "description2", LocalDate.of(2020, 2, 2), 100, 0, TransferType.TRANSFER_WITH_BANK);
         transfers.add(transferBetweenUsers);

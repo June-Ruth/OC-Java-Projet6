@@ -5,6 +5,7 @@ import com.openclassrooms.paymybuddy.model.TransferType;
 import com.openclassrooms.paymybuddy.model.UserAccount;
 import com.openclassrooms.paymybuddy.model.dto.HistoricTransferAsSenderDTO;
 import com.openclassrooms.paymybuddy.model.dto.SendingTransferDTO;
+import com.openclassrooms.paymybuddy.model.dto.TransferInformationFullDto;
 import com.openclassrooms.paymybuddy.service.TransferService;
 import com.openclassrooms.paymybuddy.service.UserAccountService;
 import org.apache.logging.log4j.LogManager;
@@ -99,8 +100,13 @@ public class TransferController {
             User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             String email = principal.getUsername();
             UserAccount userAccount = userAccountService.findUserAccountByEmail(email);
+
             if (transfer.getReceiver() == userAccount || transfer.getSender() == userAccount) {
-                return ResponseEntity.ok().body(transfer.toString());
+                String senderName = transfer.getSender().getFirstName().concat(" ").concat(transfer.getSender().getLastName());
+                String receiverName = transfer.getReceiver().getFirstName().concat(" ").concat(transfer.getReceiver().getLastName());
+                TransferInformationFullDto transferInformationFullDto = new TransferInformationFullDto(senderName, receiverName, transfer.getDescription(), transfer.getDate(), transfer.getAmount(), transfer.getFee(), transfer.getTransferType());
+                return ResponseEntity.ok().body(transferInformationFullDto.toString());
+
             } else {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
