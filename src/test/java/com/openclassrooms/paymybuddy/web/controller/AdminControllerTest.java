@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -58,6 +59,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
     void getAllUserAccountsAsAdminTest() throws Exception {
         //TODO : Rôle ADMIN
         when(userAccountService.findAllUserAccounts()).thenReturn(userAccounts);
@@ -67,6 +69,7 @@ class AdminControllerTest {
 
     @Disabled
     @Test
+    @WithMockUser(username = "user@test.com")
     void getAllUserAccountsAsUserTest() throws Exception {
         //TODO : Rôle USER
         mockMvc.perform(get("/admin/users"))
@@ -74,6 +77,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
     void getAllTransfersAsAdminTest() throws Exception {
         // TODO : Rôle ADMIN
         when(transferService.findAllTransfers()).thenReturn(transfers);
@@ -83,6 +87,7 @@ class AdminControllerTest {
 
     @Disabled
     @Test
+    @WithMockUser(username = "user@test.com")
     void getAllTransfersAsUserTest() throws Exception {
         // TODO : Rôle USER
         mockMvc.perform(get("/admin/transfers"))

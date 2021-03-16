@@ -1,11 +1,8 @@
 package com.openclassrooms.paymybuddy.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -39,11 +36,11 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                    //.antMatchers("/admin*").hasRole("ADMIN")
-                    //.antMatchers("/users*", "/transfers*").hasRole("USER")
                     .antMatchers("/login*", "/logout*", "/signup*").permitAll()
                     //.anyRequest().authenticated()
-                    .and()
+                    .antMatchers("/users*", "/transfers*").hasRole("USER")
+                    .antMatchers("/admin*").hasRole("ADMIN")
+                .and()
                 .formLogin()
                     .loginPage("/login")
                     .failureUrl("/login?error=true")

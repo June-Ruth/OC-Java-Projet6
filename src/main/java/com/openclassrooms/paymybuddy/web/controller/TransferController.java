@@ -7,8 +7,6 @@ import com.openclassrooms.paymybuddy.service.UserAccountService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -36,7 +34,6 @@ public class TransferController {
 
     //TODO : create a transfer
     @PostMapping(value = "/transfers", consumes = {"application/json"})
-    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<String> createTransfer(@Valid @RequestBody final Transfer transfer) {
 
         transferService.saveTransfer(transfer);
@@ -52,10 +49,8 @@ public class TransferController {
 
     //TODO : see les derniers transferts que j'ai effectué en tant que user en version simplifié (voir maquette)
     @GetMapping(value = "/transfers")
-    @PreAuthorize("hasRole('ROLE_USER')")
     public List<Transfer> getMyTransfersAsSender(Principal principal) {
-        User actualUser = (User) principal;
-        String email = actualUser.getUsername();
+        String email = principal.getName();
         UserAccount userAccount = userAccountService.findUserAccountByEmail(email);
         List<Transfer> transfers = transferService.findTransferBySender(userAccount);
         return transfers;

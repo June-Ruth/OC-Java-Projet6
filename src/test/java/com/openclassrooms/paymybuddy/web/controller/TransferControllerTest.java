@@ -3,33 +3,19 @@ package com.openclassrooms.paymybuddy.web.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassrooms.paymybuddy.model.*;
 import com.openclassrooms.paymybuddy.repository.RoleDAO;
-import com.openclassrooms.paymybuddy.security.SpringSecurityConfiguration;
-import com.openclassrooms.paymybuddy.security.UserDetailsServiceImpl;
 import com.openclassrooms.paymybuddy.service.TransferService;
 import com.openclassrooms.paymybuddy.service.UserAccountService;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -38,16 +24,11 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@ExtendWith(SpringExtension.class)
 @WebMvcTest(TransferController.class)
-//@ContextConfiguration(classes = SpringSecurityConfiguration.class)
-//@SpringBootTest
-//@AutoConfigureMockMvc
 class TransferControllerTest {
 
     @Autowired
@@ -86,7 +67,7 @@ class TransferControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@test.com", password = "password" ,roles = {"USER"})
+    @WithMockUser(username = "user@test.com")
     void createTransferAsActualUserAndValidArgsTest() throws Exception {
         // TODO : Rôle USER && USER.id = user_id && arguments valides
         when(transferService.saveTransfer(any(Transfer.class))).thenReturn(transfer1);
@@ -97,7 +78,7 @@ class TransferControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@test.com", password = "password" ,roles = {"USER"})
+    @WithMockUser(username = "user@test.com")
     void createTransferAsActualUserAndInvalidArgsTest() throws Exception {
         Transfer invalidTransfer = new Transfer(userAccount1, userAccount2, null, null, 0, 0, TransferType.TRANSFER_WITH_BANK);
         // TODO :  Rôle USER && USER.id = user_id && arguments invalides
@@ -107,8 +88,8 @@ class TransferControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Disabled
     @Test
+    @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
     void createTransferAsAdminAndValidArgsTest() throws Exception {
         // TODO : Rôle ADMIN && USER.id ≠ user_id && arguments valides
         mockMvc.perform(post("/transfers")
@@ -119,7 +100,7 @@ class TransferControllerTest {
 
     @Disabled
     @Test
-    @WithMockUser(username = "user@test.com", password = "password" ,roles = {"USER"})
+    @WithMockUser(username = "user@test.com")
     void createTransferAsDifferentUserAndValidArgsTest() throws Exception {
         // TODO : Rôle USER && USER.id ≠ user_id && arguments valides
         mockMvc.perform(post("/transfers")
@@ -129,7 +110,7 @@ class TransferControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@test.com", password = "password" ,roles = {"USER"})
+    @WithMockUser(username = "user@test.com")
     void getMyTransfersAsSenderAsActualUserTest() throws Exception {
         // TODO : Rôle USER && USER.id = user_id
         when(userAccountService.findUserAccountById(anyInt())).thenReturn(userAccount1);
@@ -140,6 +121,7 @@ class TransferControllerTest {
 
     @Disabled
     @Test
+    @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
     void getMyTransfersAsSenderAsAdminTest() throws Exception {
         // TODO : Rôle ADMIN && USER.id ≠ user_id
         mockMvc.perform(get("/transfers"))
@@ -148,7 +130,7 @@ class TransferControllerTest {
 
     @Disabled
     @Test
-    @WithMockUser(username = "user@test.com", password = "password" ,roles = {"USER"})
+    @WithMockUser(username = "user@test.com")
     void getMyTransfersAsSenderAsDifferentUserTest() throws Exception {
         // TODO : Rôle USER && USER.id ≠ user_id
         mockMvc.perform(get("/transfers"))
@@ -156,7 +138,7 @@ class TransferControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@test.com", password = "password" ,roles = {"USER"})
+    @WithMockUser(username = "user@test.com")
     void getTransferAsActualUserAndTransferExistsTest() throws Exception {
         // TODO : Rôle USER && USER.id = user_id (sender or receiver) && transfer_id existant dans DB
         int transfer_id = 0;
@@ -166,7 +148,7 @@ class TransferControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@test.com", password = "password" ,roles = {"USER"})
+    @WithMockUser(username = "user@test.com")
     void getTransferAsActualUserAndTransferNotExistsTest() throws Exception {
         // TODO : Rôle USER && USER.id = user_id (sender or receiver) && transfer_id inexistant dans DB
         int transfer_id = 0;
@@ -177,6 +159,7 @@ class TransferControllerTest {
 
     @Disabled
     @Test
+    @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
     void getTransferAsAdminAndTransferExistsTest() throws Exception {
         // TODO : Rôle ADMIN && USER.id ≠ user_id (sender or receiver) && transfer_id existant dans DB
         int transfer_id = 0;
@@ -186,7 +169,7 @@ class TransferControllerTest {
 
     @Disabled
     @Test
-    @WithMockUser(username = "user@test.com", password = "password" ,roles = {"USER"})
+    @WithMockUser(username = "user@test.com")
     void getTransferAsDifferentUserAndTransferExistsTest() throws Exception {
         // TODO : Rôle USER && USER.id ≠ user_id (sender or receiver) && transfer_id existant dans DB
         int transfer_id = 0;

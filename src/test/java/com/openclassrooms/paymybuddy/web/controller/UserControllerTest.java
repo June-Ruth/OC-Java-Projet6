@@ -97,7 +97,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@test.com", roles = "USER")
+    @WithMockUser(username = "user@test.com")
     void getUserAccountInfoAsActualUserTest() throws Exception {
         // TODO : Rôle USER && USER.id = user_id
         int user_id = 0;
@@ -118,7 +118,7 @@ class UserControllerTest {
 
     @Disabled
     @Test
-    @WithMockUser(username = "user@test.com", roles = "USER")
+    @WithMockUser(username = "user@test.com")
     void getUserAccountInfoAsDifferentUserTest() throws Exception {
         // TODO : Rôle USER && USER.id ≠ user_id
         int user_id = 0;
@@ -127,7 +127,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = "not-existing")
+    @WithMockUser(username = "user@test.com")
     void getUserAccountInfoAsNotExistsUserTest() throws Exception {
         // TODO : user_id inexistant dans DB
         int user_id = 0;
@@ -137,7 +137,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@test.com", roles = "USER")
+    @WithMockUser(username = "user@test.com")
     void updateUserAccountInfoAsActualUserAndValidArgsTest() throws Exception {
         // TODO : Rôle USER && USER.id = user_id && arguments valides
         int user_id = 0;
@@ -150,7 +150,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@test.com", roles = "USER")
+    @WithMockUser(username = "user@test.com")
     void updateUserAccountInfoAsActualUserAndInvalidArgsTest() throws Exception {
         // TODO : Rôle USER && USER.id = user_id && arguments invalides
         int user_id = 0;
@@ -168,7 +168,7 @@ class UserControllerTest {
 
     @Disabled
     @Test
-    @WithMockUser(username = "admin@test.com", roles = "ADMIN")
+    @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
     void updateUserAccountInfoAsAdminAndValidArgsTest() throws Exception {
         // TODO : Rôle ADMIN && USER.id ≠ user_id && arguments valides
         int user_id = 0;
@@ -178,7 +178,7 @@ class UserControllerTest {
 
     @Disabled
     @Test
-    @WithMockUser(username = "user@test.com", roles = "USER")
+    @WithMockUser(username = "user@test.com")
     void updateUserAccountInfoAsDifferentUserAndValidArgsTest() throws Exception {
         // TODO : Rôle USER && USER.id ≠ user_id && arguments valides
         int user_id = 0;
@@ -187,7 +187,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = "not-existing")
+    @WithMockUser(username = "user@test.com")
     void updateUserAccountInfoAsNotExistsUserAndValidArgsTest() throws Exception {
         // TODO : user_id inexistant dans DB && arguments valides
         int user_id = 0;
@@ -199,7 +199,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@test.com", roles = "USER")
+    @WithMockUser(username = "user@test.com")
     void deleteUserAccountAsActualUserTest() throws Exception {
         // TODO : Rôle USER && USER.id = user_id
         int user_id = 0;
@@ -211,7 +211,7 @@ class UserControllerTest {
 
     @Disabled
     @Test
-    @WithMockUser(username = "admin@test.com", roles = "ADMIN")
+    @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
     void deleteUserAccountAsAdminTest() throws Exception {
         // TODO : Rôle ADMIN && USER.id ≠ user_id
         int user_id = 0;
@@ -221,7 +221,7 @@ class UserControllerTest {
 
     @Disabled
     @Test
-    @WithMockUser(username = "user@test.com", roles = "USER")
+    @WithMockUser(username = "user@test.com")
     void deleteUserAccountAsDifferentUserTest() throws Exception {
         // TODO : Rôle USER && USER.id ≠ user_id
         int user_id = 0;
@@ -230,7 +230,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = "not-existing")
+    @WithMockUser(username = "user@test.com")
     void deleteUserAccountAsNotExistsUserTest() throws Exception {
         // TODO : user_id inexistant dans DB
         int user_id = 0;
@@ -240,7 +240,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@test.com", roles = "USER")
+    @WithMockUser(username = "user@test.com")
     void getAllUserConnectionsAsActualUserTest() throws Exception {
         // TODO : Rôle USER && USER.id = user_id
         int user_id = 0;
@@ -252,7 +252,7 @@ class UserControllerTest {
 
     @Disabled
     @Test
-    @WithMockUser(username = "admin@test.com", roles = "ADMIN")
+    @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
     void getAllUserConnectionsAsAdminTest() throws Exception {
         // TODO : Rôle ADMIN && USER.id ≠ user_id
         int user_id = 0;
@@ -262,7 +262,7 @@ class UserControllerTest {
 
     @Disabled
     @Test
-    @WithMockUser(username = "user@test.com", roles = "USER")
+    @WithMockUser(username = "user@test.com")
     void getAllUserConnectionsAsDifferentUserTest() throws Exception {
         // TODO : Rôle USER && USER.id ≠ user_id
         int user_id = 0;
@@ -271,7 +271,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = "not-existing")
+    @WithMockUser(username = "user@test.com")
     void getAllUserConnectionsAsNotExistsUserTest() throws Exception {
         // TODO : user_id inexistant dans DB
         int user_id = 0;
@@ -282,7 +282,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@test.com", roles = "USER")
+    @WithMockUser(username = "user@test.com")
     void updateToAddNewConnectionAsActualUserAndConnectionExistsTest() throws Exception {
         // TODO : Rôle USER && USER.id = user_id && connection_mail existant dans DB
         int user_id = 0;
@@ -295,7 +295,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@test.com", roles = "USER")
+    @WithMockUser(username = "user@test.com")
     void updateToAddNewConnectionAsActualUserAndConnectionNotExistsTest() throws Exception {
         // TODO : Rôle USER && USER.id = user_id && connection_mail inexistant dans DB
         int user_id = 0;
@@ -308,7 +308,7 @@ class UserControllerTest {
 
     @Disabled
     @Test
-    @WithMockUser(username = "admin@test.com", roles = "ADMIN")
+    @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
     void updateToAddNewConnectionAsAdminAndConnectionExistsTest() throws Exception {
         // TODO : Rôle ADMIN && USER.id ≠ user_id && connection_mail existant dans DB
         int user_id = 0;
@@ -319,7 +319,7 @@ class UserControllerTest {
 
     @Disabled
     @Test
-    @WithMockUser(username = "user@test.com", roles = "USER")
+    @WithMockUser(username = "user@test.com")
     void updateToAddNewConnectionAsDifferentUserAndConnectionExistsTest() throws Exception {
         // TODO : Rôle USER && USER.id ≠ user_id && connection_mail existant dans DB
         int user_id = 0;
@@ -329,7 +329,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = "not-existing")
+    @WithMockUser(username = "user@test.com")
     void updateToAddNewConnectionAsNotExistsUserAndConnectionExistsTest() throws Exception {
         // TODO : user_id inexistant dans DB
         int user_id = 0;
@@ -340,7 +340,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@test.com", roles = "USER")
+    @WithMockUser(username = "user@test.com")
     void updateToDeleteOldConnectionExistsAsActualUserTest() throws Exception {
         // TODO : Rôle USER && USER.id = user_id && connection_id existant dans network
         int user_id = 0;
@@ -353,7 +353,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@test.com", roles = "USER")
+    @WithMockUser(username = "user@test.com")
     void updateToDeleteOldConnectionNotExistsAsActualUserTest() throws Exception {
         // TODO : Rôle USER && USER.id = user_id && connection_id inexistant dans network
         int user_id = 0;
@@ -366,7 +366,7 @@ class UserControllerTest {
 
     @Disabled
     @Test
-    @WithMockUser(username = "admin@test.com", roles = "ADMIN")
+    @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
     void updateToDeleteOldConnectionExistsAsAdminTest() throws Exception {
         // TODO : Rôle ADMIN && USER.id ≠ user_id && connection_id existant dans network
         int user_id = 0;
@@ -377,7 +377,7 @@ class UserControllerTest {
 
     @Disabled
     @Test
-    @WithMockUser(username = "user@test.com", roles = "USER")
+    @WithMockUser(username = "user@test.com")
     void updateToDeleteOldConnectionExistsAsDifferentUserTest() throws Exception {
         // TODO : Rôle USER && USER.id ≠ user_id && connection_id existant dans network
         int user_id = 0;
@@ -387,7 +387,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = "not-existing")
+    @WithMockUser(username = "user@test.com")
     void updateToDeleteOldConnectionExistsAsNotExistsUserTest() throws Exception {
         // TODO : user_id inexistant dans DB
         int user_id = 0;
@@ -399,7 +399,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user@test.com", roles = "USER")
+    @WithMockUser(username = "user@test.com")
     void getAllUserTransfersAsActualUser() throws Exception {
         // TODO : Rôle USER && USER.id = user_id
         int user_id = 0;
@@ -411,7 +411,7 @@ class UserControllerTest {
 
     @Disabled
     @Test
-    @WithMockUser(username = "admin@test.com", roles = "ADMIN")
+    @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
     void getAllUserTransfersAsAdmin() throws Exception {
         // TODO : Rôle ADMIN && USER.id ≠ user_id
         int user_id = 0;
@@ -421,7 +421,7 @@ class UserControllerTest {
 
     @Disabled
     @Test
-    @WithMockUser(username = "user@test.com", roles = "USER")
+    @WithMockUser(username = "user@test.com")
     void getAllUserTransfersAsDifferentUser() throws Exception {
         // TODO : Rôle USER && USER.id ≠ user_id
         int user_id = 0;
@@ -430,7 +430,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = "not-existing")
+    @WithMockUser(username = "user@test.com")
     void getAllUserTransfersAsNotExistsUser() throws Exception {
         // TODO : user_id inexistant dans DB
         int user_id = 0;
