@@ -32,15 +32,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (userAccount == null) {
             throw new UsernameNotFoundException("not found");
         } else {
-            return new User(userAccount.getEmail(), userAccount.getPassword(), true, true, true, true, getAuthorities(userAccount.getRoles()));
+            return new User(userAccount.getEmail(), userAccount.getPassword(), true, true, true, true, getGrantedAuthorities(userAccount.getRoles()));
         }
     }
 
-    private Collection<? extends GrantedAuthority> getAuthorities(Collection<Role> roles) {
-        return getGrantedAuthorities(getPrivileges(roles));
-    }
+    /*private Collection<? extends GrantedAuthority> getAuthorities(Collection<Role> roles) {
+        return getGrantedAuthorities(roles);
+    }*/
 
-    private List<String> getPrivileges(Collection<Role> roles) {
+    /*private List<String> getPrivileges(Collection<Role> roles) {
         List<String> privileges = new ArrayList<>();
         List<Privilege> collection = new ArrayList<>();
         for (Role role : roles) {
@@ -50,12 +50,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             privileges.add(item.getName());
         }
         return privileges;
-    }
+    }*/
 
-    private List<GrantedAuthority> getGrantedAuthorities(List<String> privileges) {
+    private List<GrantedAuthority> getGrantedAuthorities(Collection<Role> roles) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        for (String privilege : privileges) {
-            authorities.add(new SimpleGrantedAuthority(privilege));
+        for (Role role : roles) {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
         }
         return authorities;
     }

@@ -80,6 +80,14 @@ class AdminControllerTest {
                 .andExpect(status().isForbidden());
     }
 
+    @DisplayName("Get all user account information as not a user or admin")
+    @Test
+    @WithMockUser(username = "test@test.com", roles = {""})
+    void getAllUserAccountsAsNotUserTest() throws Exception {
+        mockMvc.perform(get("/admin/users"))
+                .andExpect(status().isForbidden());
+    }
+
     @DisplayName("Get all transfers information as admin")
     @Test
     @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
@@ -93,6 +101,14 @@ class AdminControllerTest {
     @Test
     @WithMockUser(username = "user@test.com")
     void getAllTransfersAsUserTest() throws Exception {
+        mockMvc.perform(get("/admin/transfers"))
+                .andExpect(status().isForbidden());
+    }
+
+    @DisplayName("Get all transfers information as not a user or admin")
+    @Test
+    @WithMockUser(username = "test@test.com", roles = {""})
+    void getAllTransfersAsNotUserTest() throws Exception {
         mockMvc.perform(get("/admin/transfers"))
                 .andExpect(status().isForbidden());
     }

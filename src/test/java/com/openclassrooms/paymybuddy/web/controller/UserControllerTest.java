@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Disabled
 @DisplayName("UserController : allow users to manage their profile")
 @WebMvcTest(UserController.class)
 class UserControllerTest {
