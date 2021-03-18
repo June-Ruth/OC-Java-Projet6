@@ -1,4 +1,4 @@
-package com.openclassrooms.paymybuddy.security;
+package com.openclassrooms.paymybuddy.configuration.security;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -34,21 +34,21 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .authorizeRequests()
+        http.authorizeRequests()
                     .antMatchers("/login/**", "/logout/**", "/signup/**").permitAll()
-                    //.anyRequest().authenticated()
                     .antMatchers("/users/**", "/transfers/**").hasRole("USER")
                     .antMatchers("/admin/**").hasRole("ADMIN")
+                    .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                    .loginPage("/login")
+                    //.loginPage("/login")
                     .failureUrl("/login?error=true")
                     .permitAll()
                     .and()
                 .logout()
                     .logoutSuccessUrl("/logout.html?logSucc=true")
-                    .permitAll();
+                    .permitAll()
+                .and().csrf().disable();
     }
 
     @Bean

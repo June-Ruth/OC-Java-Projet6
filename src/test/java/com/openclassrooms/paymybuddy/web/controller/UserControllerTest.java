@@ -3,19 +3,18 @@ package com.openclassrooms.paymybuddy.web.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassrooms.paymybuddy.model.*;
 import com.openclassrooms.paymybuddy.model.dto.UserInfoWithoutBalanceDTO;
-import com.openclassrooms.paymybuddy.repository.RoleDAO;
 import com.openclassrooms.paymybuddy.service.UserAccountService;
  import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -27,22 +26,24 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
+@DisplayName("UserController : allow users to manage their profile")
 @WebMvcTest(UserController.class)
 class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    private static RoleDAO roleDAO;
+    @MockBean
+    @Qualifier("userDetailsServiceImpl")
+    private UserDetailsService userDetailsService;
 
     @MockBean
     private UserAccountService userAccountService;
 
-    private static Transfer transfer1;
-    private static Transfer transfer2;
-    private static UserAccount userAccount1;
-    private static UserAccount userAccount2;
+    private static Transfer transferBetweenUsers;
+    private static Transfer transferWithBank;
+    private static UserAccount userAccount1User;
+    private static UserAccount userAccount2Admin;
     private static UserInfoWithoutBalanceDTO userInfoWithoutBalanceDTO;
 
     private static List<Transfer> transfers = new ArrayList<>();
@@ -51,30 +52,30 @@ class UserControllerTest {
 
     @BeforeAll
     static void beforeAll() {
-        List<Role> userRole = new ArrayList<>();
-        userRole.add(roleDAO.findByName("ROLE_USER"));
+        List<Role> roles = new ArrayList<>();
         BankAccount bankAccount1 = new BankAccount("123", "bank1", "iban1", "bic1");
         BankAccount bankAccount2 = new BankAccount("456", "bank2", "iban2", "bic2");
-        userAccount1 = new UserAccount("firstName1", "lastName1", "user1@mail.com",  "password1", userRole, bankAccount1, 0, connections, transfers);
-        userAccount2 = new UserAccount("firstName2", "lastName2", "user2@mail.com",  "password2", userRole, bankAccount2, 0, null, null);
-        transfer1 = new Transfer(userAccount1, userAccount2, "description1", LocalDate.of(2020, 1, 1), 100, 1, TransferType.TRANSFER_BETWEEN_USER);
-        transfer2 = new Transfer(userAccount1, userAccount1, "description2", LocalDate.of(2020, 2, 2), 100, 0, TransferType.TRANSFER_WITH_BANK);
-        transfers.add(transfer1);
-        transfers.add(transfer2);
-        connections.add(userAccount2);
+        userAccount1User = new UserAccount("firstName1", "lastName1", "user@test.com",  "password", roles, bankAccount1, 0, null, null);
+        userAccount2Admin = new UserAccount("firstName2", "lastName2", "admin@test.com",  "password2", roles, bankAccount2, 0, null, null);
+        transferBetweenUsers = new Transfer(userAccount1User, userAccount2Admin, "description1", LocalDate.of(2020, 1, 1), 100, 1, TransferType.TRANSFER_BETWEEN_USER);
+        transferWithBank = new Transfer(userAccount1User, userAccount1User, "description2", LocalDate.of(2020, 2, 2), 100, 0, TransferType.TRANSFER_WITH_BANK);
+        transfers.add(transferBetweenUsers);
+        transfers.add(transferWithBank);
+        connections.add(userAccount2Admin);
+
         userInfoWithoutBalanceDTO = new UserInfoWithoutBalanceDTO();
-        userInfoWithoutBalanceDTO.setFirstName(userAccount1.getFirstName());
-        userInfoWithoutBalanceDTO.setLastName(userAccount1.getLastName());
-        userInfoWithoutBalanceDTO.setEmail(userAccount1.getEmail());
-        userInfoWithoutBalanceDTO.setPassword(userAccount1.getPassword());
-        userInfoWithoutBalanceDTO.setBankAccount(userAccount1.getBankAccount());
+        userInfoWithoutBalanceDTO.setFirstName(userAccount1User.getFirstName());
+        userInfoWithoutBalanceDTO.setLastName(userAccount1User.getLastName());
+        userInfoWithoutBalanceDTO.setEmail(userAccount1User.getEmail());
+        userInfoWithoutBalanceDTO.setPassword(userAccount1User.getPassword());
+        userInfoWithoutBalanceDTO.setBankAccount(userAccount1User.getBankAccount());
     }
 
     @Test
     void createAccountWithValidArgsAndEmailNotExistsTest() throws Exception {
         // TODO : arguments valides && adresse mail inexistante dans DB
         when(userAccountService.findIfUserAccountExistsByEmail(any(String.class))).thenReturn(false);
-        when(userAccountService.saveUserAccount(any(UserAccount.class))).thenReturn(userAccount1);
+        when(userAccountService.saveUserAccount(any(UserAccount.class))).thenReturn(userAccount1User);
         mockMvc.perform(post("/signup")
                 .content(new ObjectMapper().writeValueAsString(userInfoWithoutBalanceDTO))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -86,10 +87,10 @@ class UserControllerTest {
         //TODO : argement invalides
         UserInfoWithoutBalanceDTO userInfoWithoutBalanceDTO1 = new UserInfoWithoutBalanceDTO();
         userInfoWithoutBalanceDTO1.setFirstName(null);
-        userInfoWithoutBalanceDTO1.setLastName(userAccount1.getLastName());
-        userInfoWithoutBalanceDTO1.setEmail(userAccount1.getEmail());
-        userInfoWithoutBalanceDTO1.setPassword(userAccount1.getPassword());
-        userInfoWithoutBalanceDTO1.setBankAccount(userAccount1.getBankAccount());
+        userInfoWithoutBalanceDTO1.setLastName(userAccount1User.getLastName());
+        userInfoWithoutBalanceDTO1.setEmail(userAccount1User.getEmail());
+        userInfoWithoutBalanceDTO1.setPassword(userAccount1User.getPassword());
+        userInfoWithoutBalanceDTO1.setBankAccount(userAccount1User.getBankAccount());
         mockMvc.perform(post("/signup")
                 .content(new ObjectMapper().writeValueAsString(userInfoWithoutBalanceDTO1))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -101,7 +102,7 @@ class UserControllerTest {
     void getUserAccountInfoAsActualUserTest() throws Exception {
         // TODO : Rôle USER && USER.id = user_id
         int user_id = 0;
-        when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1);
+        when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1User);
         mockMvc.perform(get("/users/{user_id}", user_id))
                 .andExpect(status().isOk());
     }
@@ -141,8 +142,8 @@ class UserControllerTest {
     void updateUserAccountInfoAsActualUserAndValidArgsTest() throws Exception {
         // TODO : Rôle USER && USER.id = user_id && arguments valides
         int user_id = 0;
-        when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1);
-        when(userAccountService.updateUserAccount(any(UserAccount.class))).thenReturn(userAccount1);
+        when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1User);
+        when(userAccountService.updateUserAccount(any(UserAccount.class))).thenReturn(userAccount1User);
         mockMvc.perform(put("/users/{user_id}", user_id)
                 .content(new ObjectMapper().writeValueAsString(userInfoWithoutBalanceDTO))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -156,10 +157,10 @@ class UserControllerTest {
         int user_id = 0;
         UserInfoWithoutBalanceDTO userInfoWithoutBalanceDTO1 = new UserInfoWithoutBalanceDTO();
         userInfoWithoutBalanceDTO1.setFirstName(null);
-        userInfoWithoutBalanceDTO1.setLastName(userAccount1.getLastName());
-        userInfoWithoutBalanceDTO1.setEmail(userAccount1.getEmail());
-        userInfoWithoutBalanceDTO1.setPassword(userAccount1.getPassword());
-        userInfoWithoutBalanceDTO1.setBankAccount(userAccount1.getBankAccount());
+        userInfoWithoutBalanceDTO1.setLastName(userAccount1User.getLastName());
+        userInfoWithoutBalanceDTO1.setEmail(userAccount1User.getEmail());
+        userInfoWithoutBalanceDTO1.setPassword(userAccount1User.getPassword());
+        userInfoWithoutBalanceDTO1.setBankAccount(userAccount1User.getBankAccount());
         mockMvc.perform(put("/users/{user_id}", user_id)
                 .content(new ObjectMapper().writeValueAsString(userInfoWithoutBalanceDTO1))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -203,7 +204,7 @@ class UserControllerTest {
     void deleteUserAccountAsActualUserTest() throws Exception {
         // TODO : Rôle USER && USER.id = user_id
         int user_id = 0;
-        when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1);
+        when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1User);
         when(userAccountService.deleteUserAccountById(any(Integer.class))).thenReturn(true);
         mockMvc.perform(delete("/users/{user_id}", user_id))
                 .andExpect(status().isOk());
@@ -244,7 +245,7 @@ class UserControllerTest {
     void getAllUserConnectionsAsActualUserTest() throws Exception {
         // TODO : Rôle USER && USER.id = user_id
         int user_id = 0;
-        when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1);
+        when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1User);
         when(userAccountService.findUserNetwork(any(Integer.class))).thenReturn(connections);
         mockMvc.perform(get("/users/{user_id}/connections", user_id))
                 .andExpect(status().isOk());
@@ -287,9 +288,9 @@ class UserControllerTest {
         // TODO : Rôle USER && USER.id = user_id && connection_mail existant dans DB
         int user_id = 0;
         String email = "connection@mail.com";
-        when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1);
+        when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1User);
         when(userAccountService.findIfUserAccountExistsByEmail(any(String.class))).thenReturn(true);
-        when(userAccountService.saveNewConnectionInUserNetwork(any(Integer.class), any(String.class))).thenReturn(userAccount1);
+        when(userAccountService.saveNewConnectionInUserNetwork(any(Integer.class), any(String.class))).thenReturn(userAccount1User);
         mockMvc.perform(put("/users/{user_id}/connections?email=" + email, user_id))
                 .andExpect(status().isCreated());
     }
@@ -300,7 +301,7 @@ class UserControllerTest {
         // TODO : Rôle USER && USER.id = user_id && connection_mail inexistant dans DB
         int user_id = 0;
         String email = "connection@mail.com";
-        when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1);
+        when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1User);
         when(userAccountService.findIfUserAccountExistsByEmail(any(String.class))).thenReturn(false);
         mockMvc.perform(put("/users/{user_id}/connections?email=" + email, user_id))
                 .andExpect(status().isNotFound());
@@ -345,9 +346,9 @@ class UserControllerTest {
         // TODO : Rôle USER && USER.id = user_id && connection_id existant dans network
         int user_id = 0;
         int connection_id = 1;
-        when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1);
+        when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1User);
         when(userAccountService.existsConnectionById(any(Integer.class))).thenReturn(true);
-        when(userAccountService.saveDeleteConnectionInUserNetwork(any(Integer.class), any(Integer.class))).thenReturn(userAccount1);
+        when(userAccountService.saveDeleteConnectionInUserNetwork(any(Integer.class), any(Integer.class))).thenReturn(userAccount1User);
         mockMvc.perform(put("/users/{user_id}/connections/{connection_id}", user_id, connection_id))
                 .andExpect(status().isOk());
     }
@@ -358,7 +359,7 @@ class UserControllerTest {
         // TODO : Rôle USER && USER.id = user_id && connection_id inexistant dans network
         int user_id = 0;
         int connection_id = 1;
-        when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1);
+        when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1User);
         when(userAccountService.existsConnectionById(any(Integer.class))).thenReturn(false);
         mockMvc.perform(put("/users/{user_id}/connections/{connection_id}", user_id, connection_id))
                 .andExpect(status().isNotFound());
@@ -403,7 +404,7 @@ class UserControllerTest {
     void getAllUserTransfersAsActualUser() throws Exception {
         // TODO : Rôle USER && USER.id = user_id
         int user_id = 0;
-        when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1);
+        when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1User);
         when(userAccountService.findUserTransfers(any(Integer.class))).thenReturn(transfers);
         mockMvc.perform(get("/users/{user_id}/transfers", user_id))
                 .andExpect(status().isOk());

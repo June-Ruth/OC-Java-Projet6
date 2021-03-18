@@ -36,3 +36,5 @@ build/
 ### Security ###
 
 *.properties
+
+*.DS_STORE

@@ -1,4 +1,4 @@
-package com.openclassrooms.paymybuddy.security;
+package com.openclassrooms.paymybuddy.configuration.security;
 
 import com.openclassrooms.paymybuddy.model.Privilege;
 import com.openclassrooms.paymybuddy.model.Role;
@@ -31,8 +31,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         UserAccount userAccount = userAccountDAO.findByEmail(email);
         if (userAccount == null) {
             throw new UsernameNotFoundException("not found");
+        } else {
+            return new User(userAccount.getEmail(), userAccount.getPassword(), true, true, true, true, getAuthorities(userAccount.getRoles()));
         }
-        return new User(userAccount.getEmail(), userAccount.getPassword(), true, true, true, true, getAuthorities(userAccount.getRoles()));
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(Collection<Role> roles) {

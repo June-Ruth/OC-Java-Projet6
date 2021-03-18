@@ -1,4 +1,4 @@
-package com.openclassrooms.paymybuddy.security;
+package com.openclassrooms.paymybuddy.configuration.security;
 
 import com.openclassrooms.paymybuddy.model.BankAccount;
 import com.openclassrooms.paymybuddy.model.Privilege;
