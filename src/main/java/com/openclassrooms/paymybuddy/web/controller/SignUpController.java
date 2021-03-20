@@ -1,10 +1,11 @@
 package com.openclassrooms.paymybuddy.web.controller;
 
+import com.openclassrooms.paymybuddy.model.Role;
+import com.openclassrooms.paymybuddy.model.Transfer;
 import com.openclassrooms.paymybuddy.model.UserAccount;
 import com.openclassrooms.paymybuddy.model.dto.UserInfoWithoutBalanceDTO;
-import com.openclassrooms.paymybuddy.repository.RoleDAO;
+import com.openclassrooms.paymybuddy.service.RoleService;
 import com.openclassrooms.paymybuddy.service.UserAccountService;
-import com.openclassrooms.paymybuddy.util.DtoConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -28,24 +31,35 @@ public class SignUpController {
     private static final Logger LOGGER = LogManager.getLogger(SignUpController.class);
 
     private UserAccountService userAccountService;
-    private RoleDAO roleDAO; //TODO : faire passer en service
+    private RoleService roleService;
     private PasswordEncoder passwordEncoder;
 
     public SignUpController(final UserAccountService pUserAccountService,
-                             final RoleDAO pRoleDAO,
-                             final PasswordEncoder pPasswordEncoder) {
+                            final RoleService pRoleService,
+                            final PasswordEncoder pPasswordEncoder) {
         Objects.requireNonNull(pUserAccountService);
         userAccountService = pUserAccountService;
-        roleDAO = pRoleDAO;
+        roleService = pRoleService;
         passwordEncoder = pPasswordEncoder;
     }
 
 
-    //TODO : create user account (and bank account => ok avec Cascade)
-    @PostMapping(value = "/signup")
+    @PostMapping(consumes = {"application/json"})
     public ResponseEntity<UserAccount> createUserAccount(@Valid @RequestBody final UserInfoWithoutBalanceDTO userInfoWithoutBalanceDTO) {
-        UserAccount userAccount = DtoConverter.convertUserInfoWithoutBalanceDTOtoUserAccount(userInfoWithoutBalanceDTO, roleDAO.findByName("ROLE_USER"));
-        userAccount.setPassword(passwordEncoder.encode(userInfoWithoutBalanceDTO.getPassword()));
+        List<UserAccount> connections = new ArrayList<>();
+        List<Transfer> transfers = new ArrayList<>();
+        Role role = roleService.findRoleByName("ROLE_USER");
+        List<Role> userRole = new ArrayList<>();
+        userRole.add(role);
+
+        UserAccount userAccount = new UserAccount(userInfoWithoutBalanceDTO.getFirstName(),
+                userInfoWithoutBalanceDTO.getLastName(),
+                userInfoWithoutBalanceDTO.getEmail(),
+                passwordEncoder.encode(userInfoWithoutBalanceDTO.getPassword()),
+                userRole,
+                userInfoWithoutBalanceDTO.getBankAccount(),
+                0, connections, transfers);
+
         userAccountService.saveUserAccount(userAccount);
 
         URI location = ServletUriComponentsBuilder

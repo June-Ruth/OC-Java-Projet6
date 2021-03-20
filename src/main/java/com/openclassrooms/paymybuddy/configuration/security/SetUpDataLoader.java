@@ -5,6 +5,8 @@ import com.openclassrooms.paymybuddy.model.Role;
 import com.openclassrooms.paymybuddy.model.UserAccount;
 import com.openclassrooms.paymybuddy.repository.RoleDAO;
 import com.openclassrooms.paymybuddy.repository.UserAccountDAO;
+import com.openclassrooms.paymybuddy.service.RoleService;
+import com.openclassrooms.paymybuddy.service.UserAccountService;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,17 +21,17 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
 
     private boolean alreadySetup = false;
 
-    private UserAccountDAO userAccountDAO;
+    private UserAccountService userAccountService;
 
-    private RoleDAO roleDAO;
+    private RoleService roleService;
 
     private PasswordEncoder passwordEncoder;
 
-    public SetUpDataLoader(final UserAccountDAO pUserAccountDAO,
-                           final RoleDAO pRoleDAO,
+    public SetUpDataLoader(final UserAccountService pUserAccountService,
+                           final RoleService pRoleService,
                            final PasswordEncoder pPasswordEncoder) {
-        userAccountDAO = pUserAccountDAO;
-        roleDAO = pRoleDAO;
+        userAccountService = pUserAccountService;
+        roleService = pRoleService;
         passwordEncoder = pPasswordEncoder;
     }
 
@@ -48,8 +50,8 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
             BankAccount bankAccount = new BankAccount("RIB", "Banque", "IBAN", "BIC");
             UserAccount userAccount = new UserAccount("FirstName", "LastName", "admin@test.com", passwordEncoder.encode("password"), roles, bankAccount, 0, new ArrayList<>(), new ArrayList<>());
 
-            if (!userAccountDAO.existsByEmail(userAccount.getEmail())) {
-                userAccountDAO.save(userAccount);
+            if (!userAccountService.findIfUserAccountExistsByEmail(userAccount.getEmail())) {
+                userAccountService.saveUserAccount(userAccount);
             }
 
             List<Role> roles2 = new ArrayList<>();
@@ -57,8 +59,8 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
             BankAccount bankAccount2 = new BankAccount("RIB", "Banque", "IBAN", "BIC");
             UserAccount userAccount2 = new UserAccount("FirstName2", "LastName2", "user@test.com", passwordEncoder.encode("password"), roles2, bankAccount2, 0, new ArrayList<>(), new ArrayList<>());
 
-            if (!userAccountDAO.existsByEmail(userAccount2.getEmail())) {
-                userAccountDAO.save(userAccount2);
+            if (!userAccountService.findIfUserAccountExistsByEmail(userAccount2.getEmail())) {
+                userAccountService.saveUserAccount(userAccount2);
             }
             //TODO : ... until here.
 
@@ -68,10 +70,10 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
 
     @Transactional
     Role createRoleIfNotFound(String name) {
-        Role role = roleDAO.findByName(name);
+        Role role = roleService.findRoleByName(name);
         if (role == null) {
             role = new Role(name);
-            roleDAO.save(role);
+            roleService.saveRole(role);
         }
         return role;
     }

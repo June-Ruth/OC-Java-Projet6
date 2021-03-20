@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("profile")
+@RequestMapping("profile/{user_id}")
 public class ProfileController {
     /**
      * @see Logger
@@ -43,7 +43,7 @@ public class ProfileController {
     }
 
     //TODO : read my own user information
-    @GetMapping(value = "/profile/{user_id}")
+    @GetMapping
     public ResponseEntity<String> getUserAccountInfo(@PathVariable final int user_id) {
         UserAccount userAccount = userAccountService.findUserAccountById(user_id);
         if(userAccount == null) {
@@ -55,7 +55,7 @@ public class ProfileController {
     }
 
     //TODO : update my own user information (except transfer log and network)
-    @PutMapping(value = "/profile/{user_id}")
+    @PutMapping
     public ResponseEntity<String> updateUserAccountInfo(@PathVariable final int user_id,
                                                         @Valid @RequestBody final UserInfoWithoutBalanceDTO userInfoDTO) {
         boolean exists = userAccountService.findUserAccountById(user_id) != null ;
@@ -70,7 +70,7 @@ public class ProfileController {
     }
 
     //TODO : delete my own user account (and bank account = OK avec Cascade)
-    @DeleteMapping(value = "/profile/{user_id}")
+    @DeleteMapping
     public ResponseEntity<String> deleteUserAccount(@PathVariable final int user_id) {
         boolean exists = userAccountService.findUserAccountById(user_id) != null;
         if (exists) {
@@ -82,7 +82,7 @@ public class ProfileController {
     }
 
     //TODO : read only my connections
-    @GetMapping(value = "/profile/{user_id}/connections")
+    @GetMapping(value = "/connections")
     public ResponseEntity<String> getAllUserConnections(@PathVariable final int user_id) {
         boolean exists = userAccountService.findUserAccountById(user_id) != null;
         if(exists) {
@@ -99,7 +99,7 @@ public class ProfileController {
     }
 
     //TODO : ajouter des connections à son network à partir de l'adresse email
-    @PutMapping(value = "/profile/{user_id}/connections")
+    @PutMapping(value = "/connections")
     public ResponseEntity<String> updateToAddNewConnection(@PathVariable final int user_id,
                                                            @RequestParam(name = "email") final String connection_email) {
         boolean user_exists = userAccountService.findUserAccountById(user_id) != null;
@@ -123,7 +123,7 @@ public class ProfileController {
     }
 
     //TODO : supprimer une connections à son network
-    @PutMapping(value = "/profile/{user_id}/connections/{connection_id}")
+    @PutMapping(value = "/connections/{connection_id}")
     public ResponseEntity<String> updateToDeleteOldConnection(@PathVariable final int user_id,
                                                               @PathVariable final int connection_id) {
         boolean user_exists = userAccountService.findUserAccountById(user_id) != null;
@@ -139,7 +139,7 @@ public class ProfileController {
     }
 
     //TODO : read only my transferlog
-    @GetMapping(value = "/profile/{user_id}/transfers")
+    @GetMapping(value = "/transfers")
     public ResponseEntity<String> getAllUserTransfers(@PathVariable final int user_id) {
         boolean exists = userAccountService.findUserAccountById(user_id) != null;
         if (exists) {
@@ -149,6 +149,4 @@ public class ProfileController {
             return ResponseEntity.notFound().build();
         }
     }
-    // peut trier par date et paginer pour plus de facilité de lecture (voir cours API OC)
-
 }

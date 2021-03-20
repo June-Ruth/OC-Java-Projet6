@@ -3,6 +3,7 @@ package com.openclassrooms.paymybuddy.web.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassrooms.paymybuddy.model.*;
 import com.openclassrooms.paymybuddy.model.dto.UserInfoWithoutBalanceDTO;
+import com.openclassrooms.paymybuddy.service.RoleService;
 import com.openclassrooms.paymybuddy.service.UserAccountService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -10,9 +11,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -20,13 +23,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Disabled
 @DisplayName("SignUpController : allow new users to create account")
-public class SignUpControllerTest {
+@WebMvcTest(SignUpController.class)
+class SignUpControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -37,6 +41,9 @@ public class SignUpControllerTest {
 
     @MockBean
     private UserAccountService userAccountService;
+
+    @MockBean
+    private RoleService roleService;
 
     private static Transfer transferBetweenUsers;
     private static Transfer transferWithBank;
@@ -67,10 +74,12 @@ public class SignUpControllerTest {
         userInfoWithoutBalanceDTO.setBankAccount(userAccount1User.getBankAccount());
     }
 
+    @DisplayName("Create an account with valid arguments and not existing mail")
     @Test
+    @WithAnonymousUser
     void createAccountWithValidArgsAndEmailNotExistsTest() throws Exception {
-        // TODO : arguments valides && adresse mail inexistante dans DB
-        when(userAccountService.findIfUserAccountExistsByEmail(any(String.class))).thenReturn(false);
+        Role userRole = new Role("ROLE_USER");
+        when(roleService.findRoleByName(anyString())).thenReturn(userRole);
         when(userAccountService.saveUserAccount(any(UserAccount.class))).thenReturn(userAccount1User);
         mockMvc.perform(post("/signup")
                 .content(new ObjectMapper().writeValueAsString(userInfoWithoutBalanceDTO))
@@ -78,9 +87,24 @@ public class SignUpControllerTest {
                 .andExpect(status().isCreated());
     }
 
+    @Disabled //TODO
     @Test
+    @WithAnonymousUser
+    void createAccountWithValidArgsAndEmailExistsTest() throws Exception {
+        // TODO : arguments valides && adresse mail existante dans DB
+        when(userAccountService.findIfUserAccountExistsByEmail(any(String.class))).thenReturn(true);
+        when(userAccountService.saveUserAccount(any(UserAccount.class))).thenReturn(userAccount1User);
+        mockMvc.perform(post("/signup")
+                .content(new ObjectMapper().writeValueAsString(userInfoWithoutBalanceDTO))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @DisplayName("Create an account with invalid arguments")
+    @Test
+    @WithAnonymousUser
     void createAccountWithInvalidArgsAndEmailNotExistsTest() throws Exception {
-        //TODO : argement invalides
         UserInfoWithoutBalanceDTO userInfoWithoutBalanceDTO1 = new UserInfoWithoutBalanceDTO();
         userInfoWithoutBalanceDTO1.setFirstName(null);
         userInfoWithoutBalanceDTO1.setLastName(userAccount1User.getLastName());

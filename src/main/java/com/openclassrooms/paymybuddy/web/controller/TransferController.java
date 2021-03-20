@@ -42,7 +42,7 @@ public class TransferController {
     }
 
     @PostMapping(consumes = {"application/json"})
-    public ResponseEntity<String> sendTransfer(@Valid @RequestBody final SendingTransferDTO transferDTO) {
+    public ResponseEntity<Transfer> sendTransfer(@Valid @RequestBody final SendingTransferDTO transferDTO) {
 
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserAccount sender = userAccountService.findUserAccountByEmail(principal.getUsername());
@@ -75,7 +75,7 @@ public class TransferController {
                 .buildAndExpand(transfer.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).body(transfer.toString());
+        return ResponseEntity.created(location).body(transfer);
     }
 
     @GetMapping
