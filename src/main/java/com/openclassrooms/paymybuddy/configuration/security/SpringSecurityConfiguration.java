@@ -21,12 +21,6 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
         userDetailsService = pUserDetailsService;
     }
 
-    /*
-    @Override
-    public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/**");
-    }*/
-
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
@@ -38,7 +32,7 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .antMatchers("/login/**", "/logout/**", "/signup/**").permitAll()
                     .antMatchers("/users/**", "/transfers/**").hasRole("USER")
                     .antMatchers("/admin/**").hasRole("ADMIN")
-                    .anyRequest().denyAll()
+                    .anyRequest().hasRole("ADMIN")
                     .and()
                 .formLogin()
                     //.loginPage("/login")
