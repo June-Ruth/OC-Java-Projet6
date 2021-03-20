@@ -1,10 +1,8 @@
 package com.openclassrooms.paymybuddy.configuration.security;
 
 import com.openclassrooms.paymybuddy.model.BankAccount;
-import com.openclassrooms.paymybuddy.model.Privilege;
 import com.openclassrooms.paymybuddy.model.Role;
 import com.openclassrooms.paymybuddy.model.UserAccount;
-import com.openclassrooms.paymybuddy.repository.PrivilegeDAO;
 import com.openclassrooms.paymybuddy.repository.RoleDAO;
 import com.openclassrooms.paymybuddy.repository.UserAccountDAO;
 import org.springframework.context.ApplicationListener;
@@ -14,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -26,17 +23,13 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
 
     private RoleDAO roleDAO;
 
-    private PrivilegeDAO privilegeDAO;
-
     private PasswordEncoder passwordEncoder;
 
     public SetUpDataLoader(final UserAccountDAO pUserAccountDAO,
                            final RoleDAO pRoleDAO,
-                           final PrivilegeDAO pPrivilegeDAO,
                            final PasswordEncoder pPasswordEncoder) {
         userAccountDAO = pUserAccountDAO;
         roleDAO = pRoleDAO;
-        privilegeDAO = pPrivilegeDAO;
         passwordEncoder = pPasswordEncoder;
     }
 
@@ -44,18 +37,8 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if(!alreadySetup) {
-            Privilege readAllData = createPrivilegeIfNotFound("READ_ALL_DATA");
-            Privilege readRestrictedData = createPrivilegeIfNotFound("READ_RESTRICTED_DATA");
-            Privilege writeOwnerData = createPrivilegeIfNotFound("WRITE_OWNER_DATA");
-
-            List<Privilege> adminPrivileges = new ArrayList<>();
-            adminPrivileges.add(readAllData);
-            List<Privilege> userPrivileges = new ArrayList<>();
-            userPrivileges.add(readRestrictedData);
-            userPrivileges.add(writeOwnerData);
-
-            Role adminRole = createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
-            Role userRole = createRoleIfNotFound("ROLE_USER", userPrivileges);
+            Role adminRole = createRoleIfNotFound("ROLE_ADMIN");
+            Role userRole = createRoleIfNotFound("ROLE_USER");
 
 
             // TODO : suppress before ending from here...
@@ -84,20 +67,10 @@ public class SetUpDataLoader implements ApplicationListener<ContextRefreshedEven
     }
 
     @Transactional
-    Privilege createPrivilegeIfNotFound(String name) {
-        Privilege privilege = privilegeDAO.findByName(name);
-        if(privilege == null) {
-            privilege = new Privilege(name);
-            privilegeDAO.save(privilege);
-        }
-        return privilege;
-    }
-
-    @Transactional
-    Role createRoleIfNotFound(String name, Collection<Privilege> privileges) {
+    Role createRoleIfNotFound(String name) {
         Role role = roleDAO.findByName(name);
         if (role == null) {
-            role = new Role(name, privileges);
+            role = new Role(name);
             roleDAO.save(role);
         }
         return role;

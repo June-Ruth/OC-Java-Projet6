@@ -30,12 +30,6 @@ CREATE TABLE IF NOT EXISTS pay_my_buddy.role_profile (
     PRIMARY KEY (role_id)
 ) ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS pay_my_buddy.privilege (
-    privilege_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    privilege_name VARCHAR(30) NOT NULL UNIQUE,
-    PRIMARY KEY (privilege_id)
-) ENGINE = InnoDB;
-
 CREATE TABLE IF NOT EXISTS pay_my_buddy.transfer(
     transfer_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     sender_user_id BIGINT UNSIGNED NOT NULL,
@@ -66,11 +60,6 @@ CREATE TABLE IF NOT EXISTS pay_my_buddy.user_role (
     user_id BIGINT UNSIGNED NOT NULL,
     role_id BIGINT UNSIGNED NOT NULL,
     PRIMARY KEY (user_id, role_id)
-) ENGINE = InnoDB;
-
-CREATE TABLE IF NOT EXISTS pay_my_buddy.role_privilege (
-    role_id BIGINT UNSIGNED NOT NULL,
-    privilege_id BIGINT UNSIGNED NOT NULL
 ) ENGINE = InnoDB;
 
 # Create table constraints
@@ -132,17 +121,5 @@ ALTER TABLE pay_my_buddy.user_role
     ADD CONSTRAINT fk_role_id
         FOREIGN KEY (role_id)
             REFERENCES role_profile(role_id)
-            ON DELETE NO ACTION
-            ON UPDATE NO ACTION;
-
-ALTER TABLE pay_my_buddy.role_privilege
-    ADD CONSTRAINT fk_role_id_privilege
-        FOREIGN KEY (role_id)
-            REFERENCES role_profile(role_id)
-            ON DELETE NO ACTION
-            ON UPDATE NO ACTION,
-    ADD CONSTRAINT fk_privilege_id
-        FOREIGN KEY (privilege_id)
-            REFERENCES privilege(privilege_id)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION;

@@ -12,14 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
@@ -29,43 +22,28 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-public class UserController {
+@RequestMapping("profile")
+public class ProfileController {
     /**
      * @see Logger
      */
-    private static final Logger LOGGER = LogManager.getLogger(UserController.class);
+    private static final Logger LOGGER = LogManager.getLogger(ProfileController.class);
 
     private UserAccountService userAccountService;
     private RoleDAO roleDAO; //TODO : faire passer en service
     private PasswordEncoder passwordEncoder;
 
-    public UserController(final UserAccountService pUserAccountService,
-                          final RoleDAO pRoleDAO,
-                          final PasswordEncoder pPasswordEncoder) {
+    public ProfileController(final UserAccountService pUserAccountService,
+                             final RoleDAO pRoleDAO,
+                             final PasswordEncoder pPasswordEncoder) {
         Objects.requireNonNull(pUserAccountService);
         userAccountService = pUserAccountService;
         roleDAO = pRoleDAO;
         passwordEncoder = pPasswordEncoder;
     }
 
-    //TODO : create user account (and bank account => ok avec Cascade)
-    @PostMapping(value = "/signup")
-    public ResponseEntity<String> createUserAccount(@Valid @RequestBody final UserInfoWithoutBalanceDTO userInfoWithoutBalanceDTO) {
-        UserAccount userAccount = DtoConverter.convertUserInfoWithoutBalanceDTOtoUserAccount(userInfoWithoutBalanceDTO, roleDAO.findByName("ROLE_USER"));
-        userAccount.setPassword(passwordEncoder.encode(userInfoWithoutBalanceDTO.getPassword()));
-        userAccountService.saveUserAccount(userAccount);
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{user_id}")
-                .buildAndExpand(userAccount.getId())
-                .toUri();
-
-        return ResponseEntity.created(location).body(userAccount.toString());
-    }
-
     //TODO : read my own user information
-    @GetMapping(value = "/users/{user_id}")
+    @GetMapping(value = "/profile/{user_id}")
     public ResponseEntity<String> getUserAccountInfo(@PathVariable final int user_id) {
         UserAccount userAccount = userAccountService.findUserAccountById(user_id);
         if(userAccount == null) {
@@ -77,7 +55,7 @@ public class UserController {
     }
 
     //TODO : update my own user information (except transfer log and network)
-    @PutMapping(value = "/users/{user_id}")
+    @PutMapping(value = "/profile/{user_id}")
     public ResponseEntity<String> updateUserAccountInfo(@PathVariable final int user_id,
                                                         @Valid @RequestBody final UserInfoWithoutBalanceDTO userInfoDTO) {
         boolean exists = userAccountService.findUserAccountById(user_id) != null ;
@@ -92,7 +70,7 @@ public class UserController {
     }
 
     //TODO : delete my own user account (and bank account = OK avec Cascade)
-    @DeleteMapping(value = "/users/{user_id}")
+    @DeleteMapping(value = "/profile/{user_id}")
     public ResponseEntity<String> deleteUserAccount(@PathVariable final int user_id) {
         boolean exists = userAccountService.findUserAccountById(user_id) != null;
         if (exists) {
@@ -104,7 +82,7 @@ public class UserController {
     }
 
     //TODO : read only my connections
-    @GetMapping(value = "/users/{user_id}/connections")
+    @GetMapping(value = "/profile/{user_id}/connections")
     public ResponseEntity<String> getAllUserConnections(@PathVariable final int user_id) {
         boolean exists = userAccountService.findUserAccountById(user_id) != null;
         if(exists) {
@@ -121,7 +99,7 @@ public class UserController {
     }
 
     //TODO : ajouter des connections à son network à partir de l'adresse email
-    @PutMapping(value = "/users/{user_id}/connections")
+    @PutMapping(value = "/profile/{user_id}/connections")
     public ResponseEntity<String> updateToAddNewConnection(@PathVariable final int user_id,
                                                            @RequestParam(name = "email") final String connection_email) {
         boolean user_exists = userAccountService.findUserAccountById(user_id) != null;
@@ -145,7 +123,7 @@ public class UserController {
     }
 
     //TODO : supprimer une connections à son network
-    @PutMapping(value = "/users/{user_id}/connections/{connection_id}")
+    @PutMapping(value = "/profile/{user_id}/connections/{connection_id}")
     public ResponseEntity<String> updateToDeleteOldConnection(@PathVariable final int user_id,
                                                               @PathVariable final int connection_id) {
         boolean user_exists = userAccountService.findUserAccountById(user_id) != null;
@@ -161,7 +139,7 @@ public class UserController {
     }
 
     //TODO : read only my transferlog
-    @GetMapping(value = "/users/{user_id}/transfers")
+    @GetMapping(value = "/profile/{user_id}/transfers")
     public ResponseEntity<String> getAllUserTransfers(@PathVariable final int user_id) {
         boolean exists = userAccountService.findUserAccountById(user_id) != null;
         if (exists) {

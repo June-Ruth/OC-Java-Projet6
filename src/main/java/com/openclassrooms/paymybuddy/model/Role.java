@@ -21,18 +21,12 @@ public class Role {
     @Column(name = "role_name")
     private String name;
 
-    @ManyToMany
-    @JoinTable(name = "role_privilege",joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role_id"),
-    inverseJoinColumns = @JoinColumn(  name = "privilege_id", referencedColumnName = "privilege_id"))
-    private Collection<Privilege> privileges;
-
     /**
      * Public constructor.
      * @param name .
      */
-    public Role(String name, final Collection<Privilege> pPrivileges ) {
+    public Role(String name) {
         this.name = name;
-        privileges = pPrivileges;
     }
 
     private Role() { }
@@ -60,13 +54,5 @@ public class Role {
 
     public void setName(String pName) {
         name = pName;
-    }
-
-    public Collection<Privilege> getPrivileges() {
-        return privileges;
-    }
-
-    public void setPrivileges(final Collection<Privilege> pPrivileges) {
-        privileges = pPrivileges;
     }
 }

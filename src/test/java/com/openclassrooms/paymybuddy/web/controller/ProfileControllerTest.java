@@ -3,6 +3,7 @@ package com.openclassrooms.paymybuddy.web.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassrooms.paymybuddy.model.*;
 import com.openclassrooms.paymybuddy.model.dto.UserInfoWithoutBalanceDTO;
+import com.openclassrooms.paymybuddy.repository.RoleDAO;
 import com.openclassrooms.paymybuddy.service.UserAccountService;
  import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -26,10 +27,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Disabled
 @DisplayName("UserController : allow users to manage their profile")
-@WebMvcTest(UserController.class)
-class UserControllerTest {
+@WebMvcTest(ProfileController.class)
+class ProfileControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -40,6 +40,9 @@ class UserControllerTest {
 
     @MockBean
     private UserAccountService userAccountService;
+
+    @MockBean
+    private RoleDAO roleDAO;
 
     private static Transfer transferBetweenUsers;
     private static Transfer transferWithBank;
@@ -73,38 +76,12 @@ class UserControllerTest {
     }
 
     @Test
-    void createAccountWithValidArgsAndEmailNotExistsTest() throws Exception {
-        // TODO : arguments valides && adresse mail inexistante dans DB
-        when(userAccountService.findIfUserAccountExistsByEmail(any(String.class))).thenReturn(false);
-        when(userAccountService.saveUserAccount(any(UserAccount.class))).thenReturn(userAccount1User);
-        mockMvc.perform(post("/signup")
-                .content(new ObjectMapper().writeValueAsString(userInfoWithoutBalanceDTO))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
-    }
-
-    @Test
-    void createAccountWithInvalidArgsAndEmailNotExistsTest() throws Exception {
-        //TODO : argement invalides
-        UserInfoWithoutBalanceDTO userInfoWithoutBalanceDTO1 = new UserInfoWithoutBalanceDTO();
-        userInfoWithoutBalanceDTO1.setFirstName(null);
-        userInfoWithoutBalanceDTO1.setLastName(userAccount1User.getLastName());
-        userInfoWithoutBalanceDTO1.setEmail(userAccount1User.getEmail());
-        userInfoWithoutBalanceDTO1.setPassword(userAccount1User.getPassword());
-        userInfoWithoutBalanceDTO1.setBankAccount(userAccount1User.getBankAccount());
-        mockMvc.perform(post("/signup")
-                .content(new ObjectMapper().writeValueAsString(userInfoWithoutBalanceDTO1))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     @WithMockUser(username = "user@test.com")
     void getUserAccountInfoAsActualUserTest() throws Exception {
         // TODO : Rôle USER && USER.id = user_id
         int user_id = 0;
         when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1User);
-        mockMvc.perform(get("/users/{user_id}", user_id))
+        mockMvc.perform(get("/profile/{user_id}", user_id))
                 .andExpect(status().isOk());
     }
 
@@ -114,7 +91,7 @@ class UserControllerTest {
     void getUserAccountInfoAsAdminTest() throws Exception {
         // TODO : Rôle ADMIN && USER.id ≠ user_id
         int user_id = 0;
-        mockMvc.perform(get("/users/{user_id}", user_id))
+        mockMvc.perform(get("/profile/{user_id}", user_id))
                 .andExpect(status().isOk());
     }
 
@@ -124,7 +101,7 @@ class UserControllerTest {
     void getUserAccountInfoAsDifferentUserTest() throws Exception {
         // TODO : Rôle USER && USER.id ≠ user_id
         int user_id = 0;
-        mockMvc.perform(get("/users/{user_id}", user_id))
+        mockMvc.perform(get("/profile/{user_id}", user_id))
                 .andExpect(status().isForbidden());
     }
 
@@ -134,7 +111,7 @@ class UserControllerTest {
         // TODO : user_id inexistant dans DB
         int user_id = 0;
         when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(null);
-        mockMvc.perform(get("/users/{user_id}", user_id))
+        mockMvc.perform(get("/profile/{user_id}", user_id))
                 .andExpect(status().isNotFound());
     }
 
@@ -145,7 +122,7 @@ class UserControllerTest {
         int user_id = 0;
         when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1User);
         when(userAccountService.updateUserAccount(any(UserAccount.class))).thenReturn(userAccount1User);
-        mockMvc.perform(put("/users/{user_id}", user_id)
+        mockMvc.perform(put("/profile/{user_id}", user_id)
                 .content(new ObjectMapper().writeValueAsString(userInfoWithoutBalanceDTO))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -162,7 +139,7 @@ class UserControllerTest {
         userInfoWithoutBalanceDTO1.setEmail(userAccount1User.getEmail());
         userInfoWithoutBalanceDTO1.setPassword(userAccount1User.getPassword());
         userInfoWithoutBalanceDTO1.setBankAccount(userAccount1User.getBankAccount());
-        mockMvc.perform(put("/users/{user_id}", user_id)
+        mockMvc.perform(put("/profile/{user_id}", user_id)
                 .content(new ObjectMapper().writeValueAsString(userInfoWithoutBalanceDTO1))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -174,7 +151,7 @@ class UserControllerTest {
     void updateUserAccountInfoAsAdminAndValidArgsTest() throws Exception {
         // TODO : Rôle ADMIN && USER.id ≠ user_id && arguments valides
         int user_id = 0;
-        mockMvc.perform(put("/users/{user_id}", user_id))
+        mockMvc.perform(put("/profile/{user_id}", user_id))
                 .andExpect(status().isForbidden());
     }
 
@@ -184,7 +161,7 @@ class UserControllerTest {
     void updateUserAccountInfoAsDifferentUserAndValidArgsTest() throws Exception {
         // TODO : Rôle USER && USER.id ≠ user_id && arguments valides
         int user_id = 0;
-        mockMvc.perform(put("/users/{user_id}", user_id))
+        mockMvc.perform(put("/profile/{user_id}", user_id))
                 .andExpect(status().isForbidden());
     }
 
@@ -194,7 +171,7 @@ class UserControllerTest {
         // TODO : user_id inexistant dans DB && arguments valides
         int user_id = 0;
         when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(null);
-        mockMvc.perform(put("/users/{user_id}", user_id)
+        mockMvc.perform(put("/profile/{user_id}", user_id)
                 .content(new ObjectMapper().writeValueAsString(userInfoWithoutBalanceDTO))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -207,7 +184,7 @@ class UserControllerTest {
         int user_id = 0;
         when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1User);
         when(userAccountService.deleteUserAccountById(any(Integer.class))).thenReturn(true);
-        mockMvc.perform(delete("/users/{user_id}", user_id))
+        mockMvc.perform(delete("/profile/{user_id}", user_id))
                 .andExpect(status().isOk());
     }
 
@@ -217,7 +194,7 @@ class UserControllerTest {
     void deleteUserAccountAsAdminTest() throws Exception {
         // TODO : Rôle ADMIN && USER.id ≠ user_id
         int user_id = 0;
-        mockMvc.perform(delete("/users/{user_id}", user_id))
+        mockMvc.perform(delete("/profile/{user_id}", user_id))
                 .andExpect(status().isForbidden());
     }
 
@@ -227,7 +204,7 @@ class UserControllerTest {
     void deleteUserAccountAsDifferentUserTest() throws Exception {
         // TODO : Rôle USER && USER.id ≠ user_id
         int user_id = 0;
-        mockMvc.perform(delete("/users/{user_id}", user_id))
+        mockMvc.perform(delete("/profile/{user_id}", user_id))
                 .andExpect(status().isForbidden());
     }
 
@@ -237,7 +214,7 @@ class UserControllerTest {
         // TODO : user_id inexistant dans DB
         int user_id = 0;
         when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(null);
-        mockMvc.perform(delete("/users/{user_id}", user_id))
+        mockMvc.perform(delete("/profile/{user_id}", user_id))
                 .andExpect(status().isNotFound());
     }
 
@@ -248,7 +225,7 @@ class UserControllerTest {
         int user_id = 0;
         when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1User);
         when(userAccountService.findUserNetwork(any(Integer.class))).thenReturn(connections);
-        mockMvc.perform(get("/users/{user_id}/connections", user_id))
+        mockMvc.perform(get("/profile/{user_id}/connections", user_id))
                 .andExpect(status().isOk());
     }
 
@@ -258,7 +235,7 @@ class UserControllerTest {
     void getAllUserConnectionsAsAdminTest() throws Exception {
         // TODO : Rôle ADMIN && USER.id ≠ user_id
         int user_id = 0;
-        mockMvc.perform(get("/users/{user_id}/connections", user_id))
+        mockMvc.perform(get("/profile/{user_id}/connections", user_id))
                 .andExpect(status().isOk());
     }
 
@@ -268,7 +245,7 @@ class UserControllerTest {
     void getAllUserConnectionsAsDifferentUserTest() throws Exception {
         // TODO : Rôle USER && USER.id ≠ user_id
         int user_id = 0;
-        mockMvc.perform(get("/users/{user_id}/connections", user_id))
+        mockMvc.perform(get("/profile/{user_id}/connections", user_id))
                 .andExpect(status().isForbidden());
     }
 
@@ -279,7 +256,7 @@ class UserControllerTest {
         int user_id = 0;
         when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(null);
         when(userAccountService.findUserNetwork(any(Integer.class))).thenReturn(connections);
-        mockMvc.perform(get("/users/{user_id}/connections", user_id))
+        mockMvc.perform(get("/profile/{user_id}/connections", user_id))
                 .andExpect(status().isNotFound());
     }
 
@@ -292,7 +269,7 @@ class UserControllerTest {
         when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1User);
         when(userAccountService.findIfUserAccountExistsByEmail(any(String.class))).thenReturn(true);
         when(userAccountService.saveNewConnectionInUserNetwork(any(Integer.class), any(String.class))).thenReturn(userAccount1User);
-        mockMvc.perform(put("/users/{user_id}/connections?email=" + email, user_id))
+        mockMvc.perform(put("/profile/{user_id}/connections?email=" + email, user_id))
                 .andExpect(status().isCreated());
     }
 
@@ -304,7 +281,7 @@ class UserControllerTest {
         String email = "connection@mail.com";
         when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1User);
         when(userAccountService.findIfUserAccountExistsByEmail(any(String.class))).thenReturn(false);
-        mockMvc.perform(put("/users/{user_id}/connections?email=" + email, user_id))
+        mockMvc.perform(put("/profile/{user_id}/connections?email=" + email, user_id))
                 .andExpect(status().isNotFound());
     }
 
@@ -315,7 +292,7 @@ class UserControllerTest {
         // TODO : Rôle ADMIN && USER.id ≠ user_id && connection_mail existant dans DB
         int user_id = 0;
         String email = "connection@mail.com";
-        mockMvc.perform(put("/users/{user_id}/connections?email=" + email, user_id))
+        mockMvc.perform(put("/profile/{user_id}/connections?email=" + email, user_id))
                 .andExpect(status().isForbidden());
     }
 
@@ -326,7 +303,7 @@ class UserControllerTest {
         // TODO : Rôle USER && USER.id ≠ user_id && connection_mail existant dans DB
         int user_id = 0;
         String email = "connection@mail.com";
-        mockMvc.perform(put("/users/{user_id}/connections?email=" + email, user_id))
+        mockMvc.perform(put("/profile/{user_id}/connections?email=" + email, user_id))
                 .andExpect(status().isForbidden());
     }
 
@@ -337,7 +314,7 @@ class UserControllerTest {
         int user_id = 0;
         String email = "connection@mail.com";
         when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(null);
-        mockMvc.perform(put("/users/{user_id}/connections?email=" + email, user_id))
+        mockMvc.perform(put("/profile/{user_id}/connections?email=" + email, user_id))
                 .andExpect(status().isNotFound());
     }
 
@@ -350,7 +327,7 @@ class UserControllerTest {
         when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1User);
         when(userAccountService.existsConnectionById(any(Integer.class))).thenReturn(true);
         when(userAccountService.saveDeleteConnectionInUserNetwork(any(Integer.class), any(Integer.class))).thenReturn(userAccount1User);
-        mockMvc.perform(put("/users/{user_id}/connections/{connection_id}", user_id, connection_id))
+        mockMvc.perform(put("/profile/{user_id}/connections/{connection_id}", user_id, connection_id))
                 .andExpect(status().isOk());
     }
 
@@ -362,7 +339,7 @@ class UserControllerTest {
         int connection_id = 1;
         when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1User);
         when(userAccountService.existsConnectionById(any(Integer.class))).thenReturn(false);
-        mockMvc.perform(put("/users/{user_id}/connections/{connection_id}", user_id, connection_id))
+        mockMvc.perform(put("/profile/{user_id}/connections/{connection_id}", user_id, connection_id))
                 .andExpect(status().isNotFound());
     }
 
@@ -373,7 +350,7 @@ class UserControllerTest {
         // TODO : Rôle ADMIN && USER.id ≠ user_id && connection_id existant dans network
         int user_id = 0;
         int connection_id = 1;
-        mockMvc.perform(put("/users/{user_id}/connections/{connection_id}", user_id, connection_id))
+        mockMvc.perform(put("/profile/{user_id}/connections/{connection_id}", user_id, connection_id))
                 .andExpect(status().isForbidden());
     }
 
@@ -384,7 +361,7 @@ class UserControllerTest {
         // TODO : Rôle USER && USER.id ≠ user_id && connection_id existant dans network
         int user_id = 0;
         int connection_id = 1;
-        mockMvc.perform(put("/users/{user_id}/connections/{connection_id}", user_id, connection_id))
+        mockMvc.perform(put("/profile/{user_id}/connections/{connection_id}", user_id, connection_id))
                 .andExpect(status().isForbidden());
     }
 
@@ -407,7 +384,7 @@ class UserControllerTest {
         int user_id = 0;
         when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(userAccount1User);
         when(userAccountService.findUserTransfers(any(Integer.class))).thenReturn(transfers);
-        mockMvc.perform(get("/users/{user_id}/transfers", user_id))
+        mockMvc.perform(get("/profile/{user_id}/transfers", user_id))
                 .andExpect(status().isOk());
     }
 
@@ -417,7 +394,7 @@ class UserControllerTest {
     void getAllUserTransfersAsAdmin() throws Exception {
         // TODO : Rôle ADMIN && USER.id ≠ user_id
         int user_id = 0;
-        mockMvc.perform(get("/users/{user_id}/transfers", user_id))
+        mockMvc.perform(get("/profile/{user_id}/transfers", user_id))
                 .andExpect(status().isOk());
     }
 
@@ -427,7 +404,7 @@ class UserControllerTest {
     void getAllUserTransfersAsDifferentUser() throws Exception {
         // TODO : Rôle USER && USER.id ≠ user_id
         int user_id = 0;
-        mockMvc.perform(get("/users/{user_id}/transfers", user_id))
+        mockMvc.perform(get("/profile/{user_id}/transfers", user_id))
                 .andExpect(status().isForbidden());
     }
 
@@ -437,7 +414,7 @@ class UserControllerTest {
         // TODO : user_id inexistant dans DB
         int user_id = 0;
         when(userAccountService.findUserAccountById(any(Integer.class))).thenReturn(null);
-        mockMvc.perform(get("/users/{user_id}/transfers", user_id))
+        mockMvc.perform(get("/profile/{user_id}/transfers", user_id))
                 .andExpect(status().isNotFound());
     }
 

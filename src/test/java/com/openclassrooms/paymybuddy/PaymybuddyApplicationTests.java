@@ -2,11 +2,10 @@ package com.openclassrooms.paymybuddy;
 
 import com.openclassrooms.paymybuddy.web.controller.AdminController;
 import com.openclassrooms.paymybuddy.web.controller.TransferController;
-import com.openclassrooms.paymybuddy.web.controller.UserController;
+import com.openclassrooms.paymybuddy.web.controller.ProfileController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -17,7 +16,7 @@ class PaymybuddyApplicationTests {
 	private TransferController transferController;
 
 	@Autowired
-	private UserController userController;
+	private ProfileController profileController;
 
 	@Autowired
 	private AdminController adminController;
@@ -26,7 +25,7 @@ class PaymybuddyApplicationTests {
 	void contextLoads() {
 		assertNotNull(adminController);
 		assertNotNull(transferController);
-		assertNotNull(userController);
+		assertNotNull(profileController);
 	}
 
 }

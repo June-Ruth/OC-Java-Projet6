@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequestMapping("transfers")
 public class TransferController {
     //TODO : Logger + JavaDoc
     /**
@@ -40,7 +41,7 @@ public class TransferController {
         userAccountService = pUserAccountService;
     }
 
-    @PostMapping(value = "/transfers", consumes = {"application/json"})
+    @PostMapping(consumes = {"application/json"})
     public ResponseEntity<String> sendTransfer(@Valid @RequestBody final SendingTransferDTO transferDTO) {
 
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -77,7 +78,7 @@ public class TransferController {
         return ResponseEntity.created(location).body(transfer.toString());
     }
 
-    @GetMapping(value = "/transfers")
+    @GetMapping
     public List<HistoricTransferAsSenderDTO> getMyTransfersAsSender() {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String email = principal.getUsername();
@@ -93,7 +94,7 @@ public class TransferController {
         return historicTransfersAsSender;
     }
 
-    @GetMapping(value = "/transfers/{transfer_id}")
+    @GetMapping(value = "/{transfer_id}")
     public ResponseEntity<String> getTransfer(@PathVariable final int transfer_id) {
         Transfer transfer = transferService.findTransferById(transfer_id);
         if (transfer != null) {

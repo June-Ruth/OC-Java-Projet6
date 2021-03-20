@@ -1,6 +1,5 @@
 package com.openclassrooms.paymybuddy.configuration.security;
 
-import com.openclassrooms.paymybuddy.model.Privilege;
 import com.openclassrooms.paymybuddy.model.Role;
 import com.openclassrooms.paymybuddy.model.UserAccount;
 import com.openclassrooms.paymybuddy.repository.UserAccountDAO;
@@ -35,22 +34,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             return new User(userAccount.getEmail(), userAccount.getPassword(), true, true, true, true, getGrantedAuthorities(userAccount.getRoles()));
         }
     }
-
-    /*private Collection<? extends GrantedAuthority> getAuthorities(Collection<Role> roles) {
-        return getGrantedAuthorities(roles);
-    }*/
-
-    /*private List<String> getPrivileges(Collection<Role> roles) {
-        List<String> privileges = new ArrayList<>();
-        List<Privilege> collection = new ArrayList<>();
-        for (Role role : roles) {
-            collection.addAll(role.getPrivileges());
-        }
-        for (Privilege item : collection) {
-            privileges.add(item.getName());
-        }
-        return privileges;
-    }*/
 
     private List<GrantedAuthority> getGrantedAuthorities(Collection<Role> roles) {
         List<GrantedAuthority> authorities = new ArrayList<>();

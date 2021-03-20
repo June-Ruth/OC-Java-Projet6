@@ -30,7 +30,7 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                     .antMatchers("/login/**", "/logout/**", "/signup/**").permitAll()
-                    .antMatchers("/users/**", "/transfers/**").hasRole("USER")
+                    .antMatchers("/profile/**", "/transfers/**").hasRole("USER")
                     .antMatchers("/admin/**").hasRole("ADMIN")
                     .anyRequest().hasRole("ADMIN")
                     .and()

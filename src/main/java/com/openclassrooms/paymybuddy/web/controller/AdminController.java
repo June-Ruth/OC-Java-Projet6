@@ -10,12 +10,14 @@ import com.openclassrooms.paymybuddy.util.DtoConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequestMapping("admin")
 public class AdminController {
     //TODO : Logger + JavaDoc
     /**
@@ -32,7 +34,7 @@ public class AdminController {
         transferService = pTransferService;
     }
 
-    @GetMapping(value = "/admin/users")
+    @GetMapping(value = "/users")
     public List<UserInfoDTO> getAllUserAccounts() {
         List<UserAccount> userAccounts = userAccountService.findAllUserAccounts();
         List<UserInfoDTO> result = new ArrayList<>();
@@ -43,7 +45,7 @@ public class AdminController {
         return result;
     }
 
-    @GetMapping(value = "/admin/transfers")
+    @GetMapping(value = "/transfers")
     public List<TransferInformationFullDto> getAllTransfers() {
         List<Transfer> transfers = transferService.findAllTransfers();
         List<TransferInformationFullDto> transferInformationFullDtoList = new ArrayList<>();
