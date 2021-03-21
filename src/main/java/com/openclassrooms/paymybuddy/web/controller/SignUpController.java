@@ -20,7 +20,6 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("signup")
@@ -28,12 +27,27 @@ public class SignUpController {
     /**
      * @see Logger
      */
-    private static final Logger LOGGER = LogManager.getLogger(SignUpController.class);
-
+    private static final Logger LOGGER =
+            LogManager.getLogger(SignUpController.class);
+    /**
+     * @see UserAccountService
+     */
     private UserAccountService userAccountService;
+    /**
+     * @see RoleService
+     */
     private RoleService roleService;
+    /**
+     * @see PasswordEncoder
+     */
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * Autowired constructor.
+     * @param pUserAccountService .
+     * @param pRoleService .
+     * @param pPasswordEncoder .
+     */
     public SignUpController(final UserAccountService pUserAccountService,
                             final RoleService pRoleService,
                             final PasswordEncoder pPasswordEncoder) {
@@ -42,21 +56,27 @@ public class SignUpController {
         passwordEncoder = pPasswordEncoder;
     }
 
-
+    /**
+     * Allows new users to create an account.
+     * @param userInfo with all valid information
+     * @return a new account
+     */
     @PostMapping(consumes = {"application/json"})
-    public ResponseEntity<UserAccount> createUserAccount(@Valid @RequestBody final UserInfoWithoutBalanceDTO userInfoWithoutBalanceDTO) {
+    public ResponseEntity<UserAccount> createUserAccount(
+            @Valid @RequestBody final UserInfoWithoutBalanceDTO userInfo) {
         List<UserAccount> connections = new ArrayList<>();
         List<Transfer> transfers = new ArrayList<>();
         Role role = roleService.findRoleByName("ROLE_USER");
         List<Role> userRole = new ArrayList<>();
         userRole.add(role);
 
-        UserAccount userAccount = new UserAccount(userInfoWithoutBalanceDTO.getFirstName(),
-                userInfoWithoutBalanceDTO.getLastName(),
-                userInfoWithoutBalanceDTO.getEmail(),
-                passwordEncoder.encode(userInfoWithoutBalanceDTO.getPassword()),
+        UserAccount userAccount =
+                new UserAccount(userInfo.getFirstName(),
+                userInfo.getLastName(),
+                userInfo.getEmail(),
+                passwordEncoder.encode(userInfo.getPassword()),
                 userRole,
-                userInfoWithoutBalanceDTO.getBankAccount(),
+                userInfo.getBankAccount(),
                 0, connections, transfers);
 
         userAccountService.saveUserAccount(userAccount);

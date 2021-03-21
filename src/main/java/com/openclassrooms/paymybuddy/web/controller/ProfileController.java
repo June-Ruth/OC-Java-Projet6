@@ -14,7 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
@@ -23,56 +30,93 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("profile/{user_id}")
+@RequestMapping("profile/{userId}")
 public class ProfileController {
     /**
      * @see Logger
      */
-    private static final Logger LOGGER = LogManager.getLogger(ProfileController.class);
-
+    private static final Logger LOGGER =
+            LogManager.getLogger(ProfileController.class);
+    /**
+     * @see UserAccountService
+     */
     private UserAccountService userAccountService;
+    /**
+     * @see PasswordEncoder
+     */
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * Autowired constructor.
+     * @param pUserAccountService .
+     * @param pPasswordEncoder .
+     */
     public ProfileController(final UserAccountService pUserAccountService,
                              final PasswordEncoder pPasswordEncoder) {
         userAccountService = pUserAccountService;
         passwordEncoder = pPasswordEncoder;
     }
 
+    /**
+     * Allows user to see their own account information.
+     * @param userId .
+     * @return response entity with user information
+     * @see UserInfoDTO
+     */
     @GetMapping
-    public ResponseEntity<String> getUserAccountInfo(@PathVariable final int user_id) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserAccount userAccountPrincipal = userAccountService.findUserAccountByEmail(principal.getUsername());
-        UserAccount userAccount = userAccountService.findUserAccountById(user_id);
+    public ResponseEntity<String> getUserAccountInfo(
+            @PathVariable final int userId) {
+        User principal = (User) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+        UserAccount userAccountPrincipal =
+                userAccountService.findUserAccountByEmail(
+                        principal.getUsername());
+        UserAccount userAccount =
+                userAccountService.findUserAccountById(userId);
 
-        if(userAccount == null) {
+        if (userAccount == null) {
             return ResponseEntity.notFound().build();
         } else if (userAccount == userAccountPrincipal) {
-            UserInfoDTO result = DtoConverter.convertUserAccountToUserInfoDTO(userAccount);
+            UserInfoDTO result =
+                    DtoConverter.convertUserAccountToUserInfoDTO(userAccount);
             return ResponseEntity.ok().body(result.toString());
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 
+    /**
+     * Allows user to update their account information.
+     * @param userId .
+     * @param userInfoDTO with new information
+     * @see UserInfoWithoutBalanceDTO
+     * @return response entity with user information
+     * @see UserAccount
+     */
     @PutMapping
-    public ResponseEntity<String> updateUserAccountInfo(@PathVariable final int user_id,
-                                                        @Valid @RequestBody final UserInfoWithoutBalanceDTO userInfoDTO) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserAccount userAccountPrincipal = userAccountService.findUserAccountByEmail(principal.getUsername());
-        UserAccount userAccountOld = userAccountService.findUserAccountById(user_id);
+    public ResponseEntity<String> updateUserAccountInfo(
+            @PathVariable final int userId,
+            @Valid @RequestBody final UserInfoWithoutBalanceDTO userInfoDTO) {
+        User principal = (User) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+        UserAccount userAccountPrincipal =
+                userAccountService.findUserAccountByEmail(
+                        principal.getUsername());
+        UserAccount userAccountOld =
+                userAccountService.findUserAccountById(userId);
         if (userAccountOld == null) {
             return ResponseEntity.notFound().build();
         } else if (userAccountOld == userAccountPrincipal) {
-            UserAccount userAccount = new UserAccount(userInfoDTO.getFirstName(),
-                                                    userInfoDTO.getLastName(),
-                                                    userInfoDTO.getEmail(),
-                                                    passwordEncoder.encode(userInfoDTO.getPassword()),
-                                                    userAccountOld.getRoles(),
-                                                    userInfoDTO.getBankAccount(),
-                                                    userAccountOld.getBalance(),
-                                                    userAccountOld.getConnection(),
-                                                    userAccountOld.getTransferLog());
+            UserAccount userAccount =
+                    new UserAccount(userInfoDTO.getFirstName(),
+                            userInfoDTO.getLastName(),
+                            userInfoDTO.getEmail(),
+                            passwordEncoder.encode(userInfoDTO.getPassword()),
+                            userAccountOld.getRoles(),
+                            userInfoDTO.getBankAccount(),
+                            userAccountOld.getBalance(),
+                            userAccountOld.getConnection(),
+                            userAccountOld.getTransferLog());
             userAccountService.updateUserAccount(userAccount);
             return ResponseEntity.ok().body(userAccount.toString());
         } else {
@@ -80,33 +124,56 @@ public class ProfileController {
         }
     }
 
+    /**
+     * Allows user to delete their own account.
+     * @param userId .
+     * @return response entity HTTP 200 if ok
+     */
     @DeleteMapping
-    public ResponseEntity<String> deleteUserAccount(@PathVariable final int user_id) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserAccount userAccountPrincipal = userAccountService.findUserAccountByEmail(principal.getUsername());
-        UserAccount userAccount = userAccountService.findUserAccountById(user_id);
+    public ResponseEntity<String> deleteUserAccount(
+            @PathVariable final int userId) {
+        User principal = (User) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+        UserAccount userAccountPrincipal =
+                userAccountService.findUserAccountByEmail(
+                        principal.getUsername());
+        UserAccount userAccount =
+                userAccountService.findUserAccountById(userId);
         if (userAccount == null) {
             return ResponseEntity.notFound().build();
         } else if (userAccount == userAccountPrincipal) {
-            userAccountService.deleteUserAccountById(user_id);
+            userAccountService.deleteUserAccountById(userId);
             return ResponseEntity.ok().body("Account was deleted");
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 
+    /**
+     * Allows user to see all their connections.
+     * @param userId .
+     * @return list with all connections
+     * @see UserRestrictedInfoDTO
+     */
     @GetMapping(value = "/connections")
-    public ResponseEntity<String> getAllUserConnections(@PathVariable final int user_id) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserAccount userAccountPrincipal = userAccountService.findUserAccountByEmail(principal.getUsername());
-        UserAccount userAccount = userAccountService.findUserAccountById(user_id);
-        if(userAccount == null) {
+    public ResponseEntity<String> getAllUserConnections(
+            @PathVariable final int userId) {
+        User principal = (User) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+        UserAccount userAccountPrincipal =
+                userAccountService.findUserAccountByEmail(
+                        principal.getUsername());
+        UserAccount userAccount =
+                userAccountService.findUserAccountById(userId);
+        if (userAccount == null) {
             return ResponseEntity.notFound().build();
-        } else if (userAccount == userAccountPrincipal){
+        } else if (userAccount == userAccountPrincipal) {
             List<UserRestrictedInfoDTO> result = new ArrayList<>();
-            List<UserAccount> userAccounts = userAccountService.findUserNetwork(user_id);
+            List<UserAccount> userAccounts =
+                    userAccountService.findUserNetwork(userId);
             for (UserAccount user : userAccounts) {
-                UserRestrictedInfoDTO userDTO = DtoConverter.convertUserAccountToUserRestrictedInfoDTO(user);
+                UserRestrictedInfoDTO userDTO = DtoConverter
+                        .convertUserAccountToUserRestrictedInfoDTO(user);
                 result.add(userDTO);
             }
             return ResponseEntity.ok().body(result.toString());
@@ -115,26 +182,40 @@ public class ProfileController {
         }
     }
 
+    /**
+     * Allows user to add new connection to their network.
+     * @param userId .
+     * @param connectionEmail to add
+     * @return 201 created if ok
+     */
     @PutMapping(value = "/connections")
-    public ResponseEntity<String> addNewConnection(@PathVariable final int user_id,
-                                                   @RequestParam(name = "email") final String connection_email) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserAccount userAccountPrincipal = userAccountService.findUserAccountByEmail(principal.getUsername());
-        UserAccount userAccount = userAccountService.findUserAccountById(user_id);
-        UserAccount connection = userAccountService.findUserAccountByEmail(connection_email);
+    public ResponseEntity<String> addNewConnection(
+            @PathVariable final int userId,
+            @RequestParam(name = "email") final String connectionEmail) {
+        User principal = (User) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+        UserAccount userAccountPrincipal =
+                userAccountService.findUserAccountByEmail(
+                        principal.getUsername());
+        UserAccount userAccount =
+                userAccountService.findUserAccountById(userId);
+        UserAccount connection =
+                userAccountService.findUserAccountByEmail(connectionEmail);
 
         if (userAccount == null || connection == null) {
             return ResponseEntity.notFound().build();
         } else if (userAccount == userAccountPrincipal) {
-            userAccountService.saveNewConnectionInUserNetwork(user_id, connection_email);
+            userAccountService.saveNewConnectionInUserNetwork(
+                    userId, connectionEmail);
 
             URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
-                    .path("/{connection_id}")
+                    .path("/{connectionId}")
                     .buildAndExpand(connection.getId())
                     .toUri();
 
-            List<UserRestrictedInfoDTO> network = new ArrayList<>(); //TODO//à compléter + voir si connection est déjà dans le network
+            List<UserRestrictedInfoDTO> network = new ArrayList<>();
+            //TODO à compléter + voir si connection est déjà dans le network
 
             return ResponseEntity.created(location).body(network.toString());
         } else {
@@ -142,38 +223,62 @@ public class ProfileController {
         }
     }
 
-    @PutMapping(value = "/connections/{connection_id}")
-    public ResponseEntity<String> deleteConnection(@PathVariable final int user_id,
-                                                   @PathVariable final int connection_id) {
+    /**
+     * Allows user to delete one of their connection.
+     * @param userId .
+     * @param connectionId to delete
+     * @return HTTP 200 if ok
+     */
+    @PutMapping(value = "/connections/{connectionId}")
+    public ResponseEntity<String> deleteConnection(
+            @PathVariable final int userId,
+            @PathVariable final int connectionId) {
 
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserAccount userAccountPrincipal = userAccountService.findUserAccountByEmail(principal.getUsername());
+        User principal = (User) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+        UserAccount userAccountPrincipal =
+                userAccountService.findUserAccountByEmail(
+                        principal.getUsername());
 
-        UserAccount userAccount = userAccountService.findUserAccountById(user_id);
-        UserAccount connection = userAccountService.findUserAccountById(connection_id);
+        UserAccount userAccount =
+                userAccountService.findUserAccountById(userId);
+        UserAccount connection =
+                userAccountService.findUserAccountById(connectionId);
         if (userAccount == null || connection == null) {
             return ResponseEntity.notFound().build();
         } else if (userAccount == userAccountPrincipal) {
-            userAccountService.saveDeleteConnectionInUserNetwork(user_id, connection_id);
+            userAccountService.saveDeleteConnectionInUserNetwork(
+                    userId, connectionId);
 
-            List<UserRestrictedInfoDTO> network = new ArrayList<>(); //TODO : à compléter
+            List<UserRestrictedInfoDTO> network = new ArrayList<>();
+            //TODO : à compléter
             return ResponseEntity.ok().body(network.toString());
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 
+    /**
+     * Allows user to see all their transfers as sender or receiver.
+     * @param userId .
+     * @return list of all transfers
+     */
     @GetMapping(value = "/transfers")
-    public ResponseEntity<String> getAllUserTransfers(@PathVariable final int user_id) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserAccount userAccountPrincipal = userAccountService.findUserAccountByEmail(principal.getUsername());
+    public ResponseEntity<String> getAllUserTransfers(
+            @PathVariable final int userId) {
+        User principal = (User) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+        UserAccount userAccountPrincipal = userAccountService
+                .findUserAccountByEmail(principal.getUsername());
 
-        UserAccount userAccount = userAccountService.findUserAccountById(user_id);
+        UserAccount userAccount =
+                userAccountService.findUserAccountById(userId);
 
-        if(userAccount == null) {
+        if (userAccount == null) {
             return ResponseEntity.notFound().build();
-        } else if (userAccount == userAccountPrincipal){
-            List<Transfer> transfers = userAccountService.findUserTransfers(user_id);
+        } else if (userAccount == userAccountPrincipal) {
+            List<Transfer> transfers =
+                    userAccountService.findUserTransfers(userId);
             return ResponseEntity.ok().body(transfers.toString());
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

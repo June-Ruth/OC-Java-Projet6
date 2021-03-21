@@ -3,7 +3,6 @@ package com.openclassrooms.paymybuddy.web.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassrooms.paymybuddy.model.*;
 import com.openclassrooms.paymybuddy.model.dto.UserInfoWithoutBalanceDTO;
-import com.openclassrooms.paymybuddy.service.RoleService;
 import com.openclassrooms.paymybuddy.service.UserAccountService;
  import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
