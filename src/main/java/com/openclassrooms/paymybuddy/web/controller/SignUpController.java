@@ -37,7 +37,6 @@ public class SignUpController {
     public SignUpController(final UserAccountService pUserAccountService,
                             final RoleService pRoleService,
                             final PasswordEncoder pPasswordEncoder) {
-        Objects.requireNonNull(pUserAccountService);
         userAccountService = pUserAccountService;
         roleService = pRoleService;
         passwordEncoder = pPasswordEncoder;
