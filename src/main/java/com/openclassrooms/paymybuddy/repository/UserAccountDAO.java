@@ -5,11 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserAccountDAO extends JpaRepository<UserAccount, Integer> {
 
-    UserAccount findById(int id);
+    Optional<UserAccount> findById(int id);
 
     boolean existsByEmail (String email);
 
@@ -19,7 +20,5 @@ public interface UserAccountDAO extends JpaRepository<UserAccount, Integer> {
 
     boolean deleteById (int id);
 
-    UserAccount findByEmail(String email);
-
-    boolean existsById(int id);
+    Optional<UserAccount> findByEmail(String email);
 }

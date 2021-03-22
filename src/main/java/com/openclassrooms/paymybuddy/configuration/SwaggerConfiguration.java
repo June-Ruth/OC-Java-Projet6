@@ -15,7 +15,7 @@ public class SwaggerConfiguration {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.openclassrooms.paymybuddy.web"))
+                .apis(RequestHandlerSelectors.basePackage("com.openclassrooms.paymybuddy.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }

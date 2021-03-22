@@ -1,5 +1,6 @@
 package com.openclassrooms.paymybuddy.configuration.security;
 
+import com.openclassrooms.paymybuddy.constant.ErrorMessage;
 import com.openclassrooms.paymybuddy.model.Role;
 import com.openclassrooms.paymybuddy.model.UserAccount;
 import com.openclassrooms.paymybuddy.repository.UserAccountDAO;
@@ -27,12 +28,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public User loadUserByUsername(final String email) throws UsernameNotFoundException {
-        UserAccount userAccount = userAccountDAO.findByEmail(email);
-        if (userAccount == null) {
-            throw new UsernameNotFoundException("not found");
-        } else {
-            return new User(userAccount.getEmail(), userAccount.getPassword(), true, true, true, true, getGrantedAuthorities(userAccount.getRoles()));
-        }
+        UserAccount userAccount = userAccountDAO.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.EMAIL_NOT_FOUND));
+
+        return new User(userAccount.getEmail(), userAccount.getPassword(), true, true, true, true, getGrantedAuthorities(userAccount.getRoles()));
     }
 
     private List<GrantedAuthority> getGrantedAuthorities(Collection<Role> roles) {

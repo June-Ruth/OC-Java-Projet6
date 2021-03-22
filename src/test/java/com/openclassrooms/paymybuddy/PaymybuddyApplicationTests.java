@@ -1,8 +1,8 @@
 package com.openclassrooms.paymybuddy;
 
-import com.openclassrooms.paymybuddy.web.controller.AdminController;
-import com.openclassrooms.paymybuddy.web.controller.TransferController;
-import com.openclassrooms.paymybuddy.web.controller.ProfileController;
+import com.openclassrooms.paymybuddy.controller.AdminController;
+import com.openclassrooms.paymybuddy.controller.TransferController;
+import com.openclassrooms.paymybuddy.controller.ProfileController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

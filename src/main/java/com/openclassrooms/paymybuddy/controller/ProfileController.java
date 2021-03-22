@@ -1,4 +1,4 @@
-package com.openclassrooms.paymybuddy.web.controller;
+package com.openclassrooms.paymybuddy.controller;
 
 import com.openclassrooms.paymybuddy.model.Transfer;
 import com.openclassrooms.paymybuddy.model.UserAccount;
@@ -75,9 +75,7 @@ public class ProfileController {
         UserAccount userAccount =
                 userAccountService.findUserAccountById(userId);
 
-        if (userAccount == null) {
-            return ResponseEntity.notFound().build();
-        } else if (userAccount == userAccountPrincipal) {
+        if (userAccount == userAccountPrincipal) {
             UserInfoDTO result =
                     DtoConverter.convertUserAccountToUserInfoDTO(userAccount);
             return ResponseEntity.ok().body(result.toString());
@@ -105,9 +103,7 @@ public class ProfileController {
                         principal.getUsername());
         UserAccount userAccountOld =
                 userAccountService.findUserAccountById(userId);
-        if (userAccountOld == null) {
-            return ResponseEntity.notFound().build();
-        } else if (userAccountOld == userAccountPrincipal) {
+       if (userAccountOld == userAccountPrincipal) {
             UserAccount userAccount =
                     new UserAccount(userInfoDTO.getFirstName(),
                             userInfoDTO.getLastName(),
@@ -140,9 +136,7 @@ public class ProfileController {
                         principal.getUsername());
         UserAccount userAccount =
                 userAccountService.findUserAccountById(userId);
-        if (userAccount == null) {
-            return ResponseEntity.notFound().build();
-        } else if (userAccount == userAccountPrincipal) {
+        if (userAccount == userAccountPrincipal) {
             userAccountService.deleteUserAccountById(userId);
             return ResponseEntity.ok().body("Account was deleted");
         } else {
@@ -166,9 +160,7 @@ public class ProfileController {
                         principal.getUsername());
         UserAccount userAccount =
                 userAccountService.findUserAccountById(userId);
-        if (userAccount == null) {
-            return ResponseEntity.notFound().build();
-        } else if (userAccount == userAccountPrincipal) {
+        if (userAccount == userAccountPrincipal) {
             List<UserRestrictedInfoDTO> result = new ArrayList<>();
             List<UserAccount> userAccounts =
                     userAccountService.findUserNetwork(userId);
@@ -203,9 +195,7 @@ public class ProfileController {
         UserAccount connection =
                 userAccountService.findUserAccountByEmail(connectionEmail);
 
-        if (userAccount == null || connection == null) {
-            return ResponseEntity.notFound().build();
-        } else if (userAccount == userAccountPrincipal) {
+        if (userAccount == userAccountPrincipal) {
             userAccountService.saveNewConnectionInUserNetwork(
                     userId, connectionEmail);
 
@@ -243,11 +233,8 @@ public class ProfileController {
 
         UserAccount userAccount =
                 userAccountService.findUserAccountById(userId);
-        UserAccount connection =
-                userAccountService.findUserAccountById(connectionId);
-        if (userAccount == null || connection == null) {
-            return ResponseEntity.notFound().build();
-        } else if (userAccount == userAccountPrincipal) {
+        if (userAccount == userAccountPrincipal) {
+            userAccountService.findUserAccountById(connectionId);
             userAccountService.saveDeleteConnectionInUserNetwork(
                     userId, connectionId);
 
@@ -275,9 +262,7 @@ public class ProfileController {
         UserAccount userAccount =
                 userAccountService.findUserAccountById(userId);
 
-        if (userAccount == null) {
-            return ResponseEntity.notFound().build();
-        } else if (userAccount == userAccountPrincipal) {
+        if (userAccount == userAccountPrincipal) {
             List<Transfer> transfers =
                     userAccountService.findUserTransfers(userId);
             return ResponseEntity.ok().body(transfers.toString());

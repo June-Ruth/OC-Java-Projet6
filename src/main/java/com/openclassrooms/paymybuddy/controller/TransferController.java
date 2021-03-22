@@ -1,5 +1,6 @@
-package com.openclassrooms.paymybuddy.web.controller;
+package com.openclassrooms.paymybuddy.controller;
 
+import com.openclassrooms.paymybuddy.constant.BusinessConstant;
 import com.openclassrooms.paymybuddy.model.Transfer;
 import com.openclassrooms.paymybuddy.model.TransferType;
 import com.openclassrooms.paymybuddy.model.UserAccount;
@@ -75,12 +76,8 @@ public class TransferController {
 
         UserAccount receiver = userAccountService
                 .findUserAccountByEmail(transferDTO.getReceiverEmail());
-        //TODO : if (receiver == null)
-        // throw new EmailNotExistsException;
 
         double amount = transferDTO.getAmount();
-        //TODO : if (amount > sender.getBalance())
-        // throw NotEnoughMoneyException;
 
         TransferType transferType;
         double fee;
@@ -89,7 +86,7 @@ public class TransferController {
             fee = 0;
         } else {
             transferType = TransferType.TRANSFER_BETWEEN_USER;
-            fee = amount * 0.05;
+            fee = amount * BusinessConstant.FEE_RATE;
         }
 
         Transfer transfer = new Transfer(sender,

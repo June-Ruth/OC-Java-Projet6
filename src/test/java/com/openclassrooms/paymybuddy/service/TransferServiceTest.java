@@ -73,7 +73,7 @@ class TransferServiceTest {
     @DisplayName("Find a transfer by its id")
     @Test
     void findTransferByIdTest() {
-        when(transferDAO.findById(anyInt())).thenReturn(transfer1);
+        when(transferDAO.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(transfer1));
         transferService.findTransferById(0);
         verify(transferDAO, times(1)).findById(0);
     }

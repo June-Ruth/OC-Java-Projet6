@@ -12,7 +12,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
-public class RoleServiceTest {
+class RoleServiceTest {
 
     @Mock
     private static RoleDAO roleDAO;

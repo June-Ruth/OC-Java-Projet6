@@ -1,5 +1,8 @@
 package com.openclassrooms.paymybuddy.service;
 
+import com.openclassrooms.paymybuddy.constant.ErrorMessage;
+import com.openclassrooms.paymybuddy.exception.ElementNotFoundException;
+import com.openclassrooms.paymybuddy.exception.NotEnoughMoneyException;
 import com.openclassrooms.paymybuddy.model.Transfer;
 import com.openclassrooms.paymybuddy.model.TransferType;
 import com.openclassrooms.paymybuddy.model.UserAccount;
@@ -56,14 +59,18 @@ public class TransferServiceImpl implements TransferService {
         UserAccount sender = transfer.getSender();
         UserAccount receiver = transfer.getReceiver();
         double amount = transfer.getAmount();
+        double senderBalance = sender.getBalance();
+
+        if (amount > senderBalance) throw new NotEnoughMoneyException(ErrorMessage.NOT_ENOUGH_MONEY); //TODO : TESTS
+
         TransferType type = transfer.getTransferType();
         switch (type) {
             case TRANSFER_WITH_BANK:
-                sender.setBalance(sender.getBalance() - amount);
+                sender.setBalance(senderBalance - amount);
                 userAccountService.saveUserAccount(sender);
                 break;
             case TRANSFER_BETWEEN_USER:
-                sender.setBalance(sender.getBalance() - amount);
+                sender.setBalance(senderBalance - amount);
                 receiver.setBalance(receiver.getBalance() + amount);
                 userAccountService.saveUserAccount(sender);
                 userAccountService.saveUserAccount(receiver);
@@ -81,7 +88,7 @@ public class TransferServiceImpl implements TransferService {
      */
     @Override
     public Transfer findTransferById(final int transferId) {
-        return transferDAO.findById(transferId);
+        return transferDAO.findById(transferId).orElseThrow(() -> new ElementNotFoundException(ErrorMessage.TRANSFER_NOT_FOUND));
     }
 
     /**

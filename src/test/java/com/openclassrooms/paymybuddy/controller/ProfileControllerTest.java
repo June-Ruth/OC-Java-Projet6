@@ -1,6 +1,7 @@
-package com.openclassrooms.paymybuddy.web.controller;
+package com.openclassrooms.paymybuddy.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openclassrooms.paymybuddy.exception.ElementNotFoundException;
 import com.openclassrooms.paymybuddy.model.*;
 import com.openclassrooms.paymybuddy.model.dto.UserInfoWithoutBalanceDTO;
 import com.openclassrooms.paymybuddy.service.UserAccountService;
@@ -100,7 +101,7 @@ class ProfileControllerTest {
     void getUserAccountInfoAsNotExistsUserTest() throws Exception {
         int user_id = 0;
         when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount1User);
-        when(userAccountService.findUserAccountById(anyInt())).thenReturn(null);
+        when(userAccountService.findUserAccountById(anyInt())).thenThrow(ElementNotFoundException.class);
         mockMvc.perform(get("/profile/{user_id}", user_id))
                 .andExpect(status().isNotFound());
     }
@@ -166,7 +167,7 @@ class ProfileControllerTest {
     void updateUserAccountInfoAsNotExistsUserAndValidArgsTest() throws Exception {
         int user_id = 0;
         when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount2Admin);
-        when(userAccountService.findUserAccountById(anyInt())).thenReturn(null);
+        when(userAccountService.findUserAccountById(anyInt())).thenThrow(ElementNotFoundException.class);
         mockMvc.perform(put("/profile/{user_id}", user_id)
                 .content(new ObjectMapper().writeValueAsString(userInfoWithoutBalanceDTO))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -215,7 +216,7 @@ class ProfileControllerTest {
     void deleteUserAccountAsNotExistsUserTest() throws Exception {
         int user_id = 0;
         when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount2Admin);
-        when(userAccountService.findUserAccountById(anyInt())).thenReturn(null);
+        when(userAccountService.findUserAccountById(anyInt())).thenThrow(ElementNotFoundException.class);
         mockMvc.perform(delete("/profile/{user_id}", user_id))
                 .andExpect(status().isNotFound());
     }
@@ -269,7 +270,7 @@ class ProfileControllerTest {
     void getAllUserConnectionsAsNotExistsUserTest() throws Exception {
         int user_id = 0;
         when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount2Admin);
-        when(userAccountService.findUserAccountById(anyInt())).thenReturn(null);
+        when(userAccountService.findUserAccountById(anyInt())).thenThrow(ElementNotFoundException.class);
         mockMvc.perform(get("/profile/{user_id}/connections", user_id))
                 .andExpect(status().isNotFound());
     }
@@ -294,7 +295,7 @@ class ProfileControllerTest {
     void addNewConnectionAsActualUserAndConnectionNotExistsTest() throws Exception {
         int user_id = 0;
         String email = "connection@mail.com";
-        when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount1User).thenReturn(null);
+        when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount1User).thenThrow(ElementNotFoundException.class);
         when(userAccountService.findUserAccountById(anyInt())).thenReturn(userAccount1User);
         mockMvc.perform(put("/profile/{user_id}/connections?email=" + email, user_id))
                 .andExpect(status().isNotFound());
@@ -344,7 +345,7 @@ class ProfileControllerTest {
         int user_id = 0;
         int connection_id = 1;
         when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount1User);
-        when(userAccountService.findUserAccountById(anyInt())).thenReturn(userAccount1User).thenReturn(null);
+        when(userAccountService.findUserAccountById(anyInt())).thenReturn(userAccount1User).thenThrow(ElementNotFoundException.class);
         mockMvc.perform(put("/profile/{user_id}/connections/{connection_id}", user_id, connection_id))
                 .andExpect(status().isNotFound());
     }
@@ -411,7 +412,7 @@ class ProfileControllerTest {
     void getAllUserTransfersAsNotExistsUser() throws Exception {
         int user_id = 0;
         when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount1User);
-        when(userAccountService.findUserAccountById(anyInt())).thenReturn(null);
+        when(userAccountService.findUserAccountById(anyInt())).thenThrow(ElementNotFoundException.class);
         mockMvc.perform(get("/profile/{user_id}/transfers", user_id))
                 .andExpect(status().isNotFound());
     }

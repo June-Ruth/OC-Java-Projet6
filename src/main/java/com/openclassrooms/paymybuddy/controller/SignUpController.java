@@ -1,4 +1,4 @@
-package com.openclassrooms.paymybuddy.web.controller;
+package com.openclassrooms.paymybuddy.controller;
 
 import com.openclassrooms.paymybuddy.model.Role;
 import com.openclassrooms.paymybuddy.model.Transfer;

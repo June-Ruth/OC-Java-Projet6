@@ -1,4 +1,4 @@
-package com.openclassrooms.paymybuddy.web.controller;
+package com.openclassrooms.paymybuddy.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassrooms.paymybuddy.model.*;

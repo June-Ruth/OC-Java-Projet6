@@ -13,7 +13,7 @@ public interface UserAccountService {
      */
     UserAccount findUserAccountById(int id);
     /**
-     * Find if a user account existis by its email.
+     * Find if a user account exists by its email.
      * @param email .
      * @return true if a user account with the email is in database.
      */

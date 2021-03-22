@@ -1,4 +1,4 @@
-package com.openclassrooms.paymybuddy.web.controller;
+package com.openclassrooms.paymybuddy.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassrooms.paymybuddy.model.*;
@@ -98,7 +98,6 @@ class TransferControllerTest {
     @WithMockUser(username = "user@test.com")
     void sendTransferBetweenUsersAsUserAndInvalidArgsTest() throws Exception {
         SendingTransferDTO transferDTO = new SendingTransferDTO(null, "description1", 0);
-        // TODO :  Rôle USER && USER.id = user_id && arguments invalides
         mockMvc.perform(post("/transfers")
                 .content(new ObjectMapper().writeValueAsString(transferDTO))
                 .contentType(MediaType.APPLICATION_JSON))

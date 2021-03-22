@@ -55,7 +55,7 @@ class UserAccountServiceTest {
 
     @Test
     void findUserAccountByIdTest() {
-        when(userAccountDAO.findById(anyInt())).thenReturn(userAccount1);
+        when(userAccountDAO.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(userAccount1));
         userAccountService.findUserAccountById(0);
         verify(userAccountDAO, times(1)).findById(0);
     }
@@ -97,15 +97,15 @@ class UserAccountServiceTest {
 
     @Test
     void findUserNetworkTest() {
-        when(userAccountDAO.findById(anyInt())).thenReturn(userAccount1);
+        when(userAccountDAO.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(userAccount1));
         assertEquals(userAccount1.getConnection().size(), userAccountService.findUserNetwork(0).size());
         verify(userAccountDAO, times(1)).findById(0);
     }
 
     @Test
     void saveNewConnectionInUserNetworkTest() {
-        when(userAccountDAO.findById(anyInt())).thenReturn(userAccount1);
-        when(userAccountDAO.findByEmail(anyString())).thenReturn(userAccount2);
+        when(userAccountDAO.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(userAccount1));
+        when(userAccountDAO.findByEmail(anyString())).thenReturn(java.util.Optional.ofNullable(userAccount2));
         when(userAccountDAO.save(any(UserAccount.class))).thenReturn(userAccount1);
         assertNotNull(userAccountService.saveNewConnectionInUserNetwork(0, "test@test.com"));
         verify(userAccountDAO, times(1)).save(userAccount1);
@@ -117,7 +117,7 @@ class UserAccountServiceTest {
         List<Role> userRole = new ArrayList<>();
         UserAccount userAccount3 = new UserAccount("firstName1", "lastName1", "user1@mail.com", "password1", userRole, bankAccount1, 0, connections, null);
         connections.add(userAccount2);
-        when(userAccountDAO.findById(anyInt())).thenReturn(userAccount3).thenReturn(userAccount2);
+        when(userAccountDAO.findById(anyInt())).thenReturn(java.util.Optional.of(userAccount3)).thenReturn(java.util.Optional.ofNullable(userAccount2));
         when(userAccountDAO.save(any(UserAccount.class))).thenReturn(userAccount3);
         assertNotNull(userAccountService.saveDeleteConnectionInUserNetwork(0, 1));
         verify(userAccountDAO, times(1)).save(userAccount3);
@@ -125,13 +125,13 @@ class UserAccountServiceTest {
 
     @Test
     void findUserTransfersTest() {
-        when(userAccountDAO.findById(anyInt())).thenReturn(userAccount1);
+        when(userAccountDAO.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(userAccount1));
         assertEquals(userAccount1.getTransferLog().size(), userAccountService.findUserTransfers(0).size());
     }
 
     @Test
     void findUserAccountByEmail() {
-        when(userAccountDAO.findByEmail(anyString())).thenReturn(userAccount1);
+        when(userAccountDAO.findByEmail(anyString())).thenReturn(java.util.Optional.ofNullable(userAccount1));
         userAccountService.findUserAccountByEmail(userAccount1.getEmail());
         verify(userAccountDAO, times(1)).findByEmail(anyString());
     }
