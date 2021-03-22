@@ -19,14 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
-@Disabled
 @ExtendWith(SpringExtension.class)
-public class UserAccountServiceTest {
+class UserAccountServiceTest {
 
     @Mock
     private static UserAccountDAO userAccountDAO;
-
-    private static RoleDAO roleDAO;
 
     private static UserAccountService userAccountService;
 
@@ -40,10 +37,10 @@ public class UserAccountServiceTest {
     private static List<UserAccount> userAccounts = new ArrayList<>();
     private static List<UserAccount> network = new ArrayList<>();
 
-    @BeforeAll
-    static void beforeAll() {
+    @BeforeEach
+    void beforeEach() {
+        userAccountService = new UserAccountServiceImpl(userAccountDAO);
         List<Role> userRole = new ArrayList<>();
-        userRole.add(roleDAO.findByName("ROLE_USER"));
         bankAccount1 = new BankAccount("123", "bank1", "iban1", "bic1");
         BankAccount bankAccount2 = new BankAccount("456", "bank2", "iban2", "bic2");
         userAccount1 = new UserAccount("firstName1", "lastName1", "user1@mail.com", "password1", userRole, bankAccount1, 0, network, transfers);
@@ -54,11 +51,6 @@ public class UserAccountServiceTest {
         transfers.add(transfer2);
         userAccounts.add(userAccount1);
         userAccounts.add(userAccount2);
-    }
-
-    @BeforeEach
-    void beforeEach() {
-        userAccountService = new UserAccountServiceImpl(userAccountDAO);
     }
 
     @Test
@@ -92,7 +84,7 @@ public class UserAccountServiceTest {
     @Test
     void updateUserAccountTest() {
         when(userAccountDAO.save(any(UserAccount.class))).thenReturn(userAccount1);
-        userAccountService.updateUserAccount(userAccount1);
+        userAccountService.saveUserAccount(userAccount1);
         verify(userAccountDAO, times(1)).save(userAccount1);
     }
 
@@ -123,7 +115,6 @@ public class UserAccountServiceTest {
     void saveDeleteConnectionInUserNetworkTest() {
         List<UserAccount> connections = new ArrayList<>();
         List<Role> userRole = new ArrayList<>();
-        userRole.add(roleDAO.findByName("ROLE_USER"));
         UserAccount userAccount3 = new UserAccount("firstName1", "lastName1", "user1@mail.com", "password1", userRole, bankAccount1, 0, connections, null);
         connections.add(userAccount2);
         when(userAccountDAO.findById(anyInt())).thenReturn(userAccount3).thenReturn(userAccount2);
@@ -139,10 +130,10 @@ public class UserAccountServiceTest {
     }
 
     @Test
-    void existsConnectionByIdTest() {
-        when(userAccountDAO.existsById(anyInt())).thenReturn(true);
-        userAccountService.existsConnectionById(0);
-        verify(userAccountDAO, times(1)).existsById(0);
+    void findUserAccountByEmail() {
+        when(userAccountDAO.findByEmail(anyString())).thenReturn(userAccount1);
+        userAccountService.findUserAccountByEmail(userAccount1.getEmail());
+        verify(userAccountDAO, times(1)).findByEmail(anyString());
     }
 
 }

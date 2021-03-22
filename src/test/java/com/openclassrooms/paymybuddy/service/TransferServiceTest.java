@@ -1,7 +1,6 @@
 package com.openclassrooms.paymybuddy.service;
 
 import com.openclassrooms.paymybuddy.model.*;
-import com.openclassrooms.paymybuddy.repository.RoleDAO;
 import com.openclassrooms.paymybuddy.repository.TransferDAO;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,10 +51,10 @@ class TransferServiceTest {
     @Test
     void saveTransferBetweenUserTest() {
         when(transferDAO.save(any(Transfer.class))).thenReturn(transfer1);
-        when(userAccountService.updateUserAccount(any(UserAccount.class))).thenReturn(userAccount1).thenReturn(userAccount2);
+        when(userAccountService.saveUserAccount(any(UserAccount.class))).thenReturn(userAccount1).thenReturn(userAccount2);
         transferService.saveTransfer(transfer1);
         verify(transferDAO, times(1)).save(any(Transfer.class));
-        verify(userAccountService, times(2)).updateUserAccount(any(UserAccount.class));
+        verify(userAccountService, times(2)).saveUserAccount(any(UserAccount.class));
         assertEquals(900d, userAccount1.getBalance());
         assertEquals(1100d, userAccount2.getBalance());
     }
@@ -64,10 +63,10 @@ class TransferServiceTest {
     @Test
     void saveTransferWithBankTest() {
         when(transferDAO.save(any(Transfer.class))).thenReturn(transfer2);
-        when(userAccountService.updateUserAccount(any(UserAccount.class))).thenReturn(userAccount1);
+        when(userAccountService.saveUserAccount(any(UserAccount.class))).thenReturn(userAccount1);
         transferService.saveTransfer(transfer2);
         verify(transferDAO, times(1)).save(any(Transfer.class));
-        verify(userAccountService, times(1)).updateUserAccount(any(UserAccount.class));
+        verify(userAccountService, times(1)).saveUserAccount(any(UserAccount.class));
         assertEquals(900d, userAccount1.getBalance());
     }
 

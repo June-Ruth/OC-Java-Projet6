@@ -5,38 +5,47 @@ import com.openclassrooms.paymybuddy.repository.RoleDAO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RoleServiceImpl implements RoleService {
+    //TODO : Logger + exception
     /**
      * @see Logger
      */
-    private static final Logger LOGGER = LogManager.getLogger(RoleServiceImpl.class);
-
+    private static final Logger LOGGER =
+            LogManager.getLogger(RoleServiceImpl.class);
     /**
      * @see RoleDAO
      */
     private final RoleDAO roleDAO;
 
     /**
-     * Public constructor for RoleService.
-     * Require non null RoleDAO.
-     * @param pRoleDAO not null
+     * Autowired constructor for RoleService.
+     * @param pRoleDAO .
      */
     public RoleServiceImpl(final RoleDAO pRoleDAO) {
-        Objects.requireNonNull(pRoleDAO);
         roleDAO = pRoleDAO;
     }
 
+    /**
+     * Find a role by its name.
+     * @param name .
+     * @return role if found
+     */
     @Override
-    public Role findRoleByName(String name) {
+    public Role findRoleByName(final String name) {
         return roleDAO.findByName(name);
     }
 
+    /**
+     * Save a new role.
+     * @param role .
+     * @return Role saved.
+     */
+    @Transactional
     @Override
-    public Role saveRole(Role role) {
+    public Role saveRole(final Role role) {
         return roleDAO.save(role);
     }
 }

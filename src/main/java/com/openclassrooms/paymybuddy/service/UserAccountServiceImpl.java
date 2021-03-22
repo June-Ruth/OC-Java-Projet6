@@ -6,102 +6,149 @@ import com.openclassrooms.paymybuddy.repository.UserAccountDAO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class UserAccountServiceImpl implements UserAccountService {
+    //TODO : Logger + Gestion des exceptions
     /**
      * @see Logger
      */
-    private static final Logger LOGGER = LogManager.getLogger(UserAccountServiceImpl.class);
-
+    private static final Logger LOGGER =
+            LogManager.getLogger(UserAccountServiceImpl.class);
     /**
      * @see UserAccountDAO
      */
     private final UserAccountDAO userAccountDAO;
 
     /**
-     * Public constructor for UserAccountService.
-     * Require non null UserAccountDAO.
-     * @param pUserAccountDAO not null
+     * Autowired constructor for UserAccountService.
+     * @param pUserAccountDAO .
      */
     public UserAccountServiceImpl(final UserAccountDAO pUserAccountDAO) {
-        Objects.requireNonNull(pUserAccountDAO);
         userAccountDAO = pUserAccountDAO;
     }
 
+    /**
+     * Find a user account by its id.
+     * @param id .
+     * @return user account
+     */
     @Override
-    public UserAccount findUserAccountById(int id) {
+    public UserAccount findUserAccountById(final int id) {
         return userAccountDAO.findById(id);
     }
 
+    /**
+     * Find if a user account existis by its email.
+     * @param email .
+     * @return true if a user account with the email is in database.
+     */
     @Override
-    public boolean findIfUserAccountExistsByEmail(String email) {
+    public boolean findIfUserAccountExistsByEmail(final String email) {
         return userAccountDAO.existsByEmail(email);
     }
 
+    /**
+     * Find all the user accounts in database.
+     * @return list of user account
+     */
     @Override
     public List<UserAccount> findAllUserAccounts() {
         return userAccountDAO.findAll();
     }
 
+    /**
+     * Save a new user account or save update modification of user account.
+     * @param userAccount .
+     * @return user account saved.
+     */
+    @Transactional
     @Override
-    public UserAccount saveUserAccount(UserAccount userAccount) {
+    public UserAccount saveUserAccount(final UserAccount userAccount) {
         return userAccountDAO.save(userAccount);
     }
 
+    /**
+     * Delete a user account by its id.
+     * @param id .
+     * @return true if delete.
+     */
+    @Transactional
     @Override
-    public UserAccount updateUserAccount(UserAccount userAccount) {
-        return userAccountDAO.save(userAccount);
-    }
-
-    @Override
-    public boolean deleteUserAccountById(int id) {
+    public boolean deleteUserAccountById(final int id) {
         return userAccountDAO.deleteById(id);
     }
 
+    /**
+     * Find user's network.
+     * @param id .
+     * @return List of all connection.
+     */
     @Override
-    public List<UserAccount> findUserNetwork(int id) {
+    public List<UserAccount> findUserNetwork(final int id) {
         UserAccount userAccount = userAccountDAO.findById(id);
         return userAccount.getConnection();
     }
 
+    /**
+     * Add a new connection to user's network by connection email.
+     * @param userId .
+     * @param connectionEmail .
+     * @return user account updated.
+     */
+    @Transactional
     @Override
-    public UserAccount saveNewConnectionInUserNetwork(int user_id, String connection_email) {
-        UserAccount userAccount = userAccountDAO.findById(user_id);
-        UserAccount connection = userAccountDAO.findByEmail(connection_email);
+    public UserAccount saveNewConnectionInUserNetwork(
+            final int userId, final String connectionEmail) {
+        UserAccount userAccount = userAccountDAO.findById(userId);
+        UserAccount connection = userAccountDAO.findByEmail(connectionEmail);
         List<UserAccount> connections = userAccount.getConnection();
         connections.add(connection);
         userAccountDAO.save(userAccount);
         return connection;
     }
 
+    /**
+     * Delete a connection to user's network.
+     * @param userId .
+     * @param connectionId .
+     * @return user account updated
+     */
+    @Transactional
     @Override
-    public UserAccount saveDeleteConnectionInUserNetwork(int user_id, int connection_id) {
-        UserAccount userAccount = userAccountDAO.findById(user_id);
-        UserAccount connection = userAccountDAO.findById(connection_id);
+    public UserAccount saveDeleteConnectionInUserNetwork(
+            final int userId, final int connectionId) {
+        UserAccount userAccount = userAccountDAO.findById(userId);
+        UserAccount connection = userAccountDAO.findById(connectionId);
         List<UserAccount> connections = userAccount.getConnection();
         connections.remove(connection);
         UserAccount newUserAccount = userAccountDAO.save(userAccount);
         return newUserAccount;
     }
 
+    /**
+     * Find user transfer log by user id.
+     * @param id .
+     * @return transfer log
+     */
     @Override
-    public List<Transfer> findUserTransfers(int id) {
+    public List<Transfer> findUserTransfers(final int id) {
         UserAccount userAccount = userAccountDAO.findById(id);
         List<Transfer> transfers = userAccount.getTransferLog();
         return transfers;
     }
 
+    /**
+     * Find a user account by its email.
+     * Return null if not exists.
+     * @param email .
+     * @return user account.
+     */
     @Override
-    public boolean existsConnectionById(int id) {
-        return userAccountDAO.existsById(id);
-    }
-
-    @Override
-    public UserAccount findUserAccountByEmail(String email) {
+    public UserAccount findUserAccountByEmail(final String email) {
         return userAccountDAO.findByEmail(email);
     }
 }

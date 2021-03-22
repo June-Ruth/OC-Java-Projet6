@@ -13,13 +13,12 @@ import java.util.List;
 
 @Service
 public class TransferServiceImpl implements TransferService {
-    //TODO : Logger
+    //TODO : Logger + Gestion des exceptions
     /**
      * @see Logger
      */
     private static final Logger LOGGER =
             LogManager.getLogger(TransferServiceImpl.class);
-
     /**
      * @see TransferDAO
      */
@@ -61,13 +60,13 @@ public class TransferServiceImpl implements TransferService {
         switch (type) {
             case TRANSFER_WITH_BANK:
                 sender.setBalance(sender.getBalance() - amount);
-                userAccountService.updateUserAccount(sender);
+                userAccountService.saveUserAccount(sender);
                 break;
             case TRANSFER_BETWEEN_USER:
                 sender.setBalance(sender.getBalance() - amount);
                 receiver.setBalance(receiver.getBalance() + amount);
-                userAccountService.updateUserAccount(sender);
-                userAccountService.updateUserAccount(receiver);
+                userAccountService.saveUserAccount(sender);
+                userAccountService.saveUserAccount(receiver);
                 break;
                 default: break;
         }
