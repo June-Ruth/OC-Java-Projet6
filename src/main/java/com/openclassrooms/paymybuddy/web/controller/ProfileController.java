@@ -32,6 +32,7 @@ import java.util.List;
 @RestController
 @RequestMapping("profile/{userId}")
 public class ProfileController {
+    //TODO : Logger
     /**
      * @see Logger
      */
