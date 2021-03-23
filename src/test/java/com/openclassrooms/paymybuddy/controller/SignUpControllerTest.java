@@ -87,20 +87,6 @@ class SignUpControllerTest {
                 .andExpect(status().isCreated());
     }
 
-    @Disabled //TODO
-    @Test
-    @WithAnonymousUser
-    void createAccountWithValidArgsAndEmailExistsTest() throws Exception {
-        // TODO : arguments valides && adresse mail existante dans DB
-        when(userAccountService.findIfUserAccountExistsByEmail(any(String.class))).thenReturn(true);
-        when(userAccountService.saveUserAccount(any(UserAccount.class))).thenReturn(userAccount1User);
-        mockMvc.perform(post("/signup")
-                .content(new ObjectMapper().writeValueAsString(userInfoWithoutBalanceDTO))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-
     @DisplayName("Create an account with invalid arguments")
     @Test
     @WithAnonymousUser

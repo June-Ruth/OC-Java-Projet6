@@ -1,8 +1,8 @@
 package com.openclassrooms.paymybuddy.constant;
 
-public class BusinessConstant {
+public final class BusinessConstant {
 
-    private BusinessConstant() {}
+    private BusinessConstant() { }
 
     /**
      * Percentage paid for fee.

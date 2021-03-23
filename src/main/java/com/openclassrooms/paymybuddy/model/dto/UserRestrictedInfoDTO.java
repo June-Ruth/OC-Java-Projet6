@@ -4,19 +4,22 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import static com.openclassrooms.paymybuddy.constant.Number.QUINZE;
+import static com.openclassrooms.paymybuddy.constant.Number.SOIXANTE;
+
 public class UserRestrictedInfoDTO {
     /**
      * First name.
      */
     @NotNull(message = "First name cannot be null")
-    @Size(max = 15, message = "First name must be less than 15 characters")
+    @Size(max = QUINZE, message = "First name must be less than 15 characters")
     private String firstName;
 
     /**
      * Last name.
      */
     @NotNull(message = "Last name cannot be null")
-    @Size(max = 15, message = "Last name must be less than 15 characters")
+    @Size(max = QUINZE, message = "Last name must be less than 15 characters")
     private String lastName;
 
     /**
@@ -24,7 +27,7 @@ public class UserRestrictedInfoDTO {
      * Must be unique.
      */
     @Email(message = "Email should be valid")
-    @Size(max = 60, message = "Email must be less than 60 characters")
+    @Size(max = SOIXANTE, message = "Email must be less than 60 characters")
     private String email;
 
     /**

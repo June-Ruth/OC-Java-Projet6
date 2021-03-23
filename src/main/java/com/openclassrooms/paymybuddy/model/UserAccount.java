@@ -2,10 +2,29 @@ package com.openclassrooms.paymybuddy.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 import java.util.List;
+
+import static com.openclassrooms.paymybuddy.constant.Number.CENT_MILLE;
+import static com.openclassrooms.paymybuddy.constant.Number.QUINZE;
+import static com.openclassrooms.paymybuddy.constant.Number.SOIXANTE;
 
 /**
  * User account used for application.
@@ -27,7 +46,7 @@ public class UserAccount {
      * First name.
      */
     @NotNull(message = "First name cannot be null")
-    @Size(max = 15, message = "First name must be less than 15 characters")
+    @Size(max = QUINZE, message = "First name must be less than 15 characters")
     @Column(name = "first_name")
     private String firstName;
 
@@ -35,7 +54,7 @@ public class UserAccount {
      * Last name.
      */
     @NotNull(message = "Last name cannot be null")
-    @Size(max = 15, message = "Last name must be less than 15 characters")
+    @Size(max = QUINZE, message = "Last name must be less than 15 characters")
     @Column(name = "last_name")
     private String lastName;
 
@@ -44,7 +63,7 @@ public class UserAccount {
      * Must be unique.
      */
     @Email(message = "Email should be valid")
-    @Size(max = 60, message = "Email must be less than 60 characters")
+    @Size(max = SOIXANTE, message = "Email must be less than 60 characters")
     @Column(name = "email", unique = true)
     private String email;
 
@@ -62,8 +81,10 @@ public class UserAccount {
     @NotNull
     @ManyToMany
     @JoinTable(name = "user_role",
-            joinColumns = @JoinColumn( name = "user_id", referencedColumnName = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role_id"))
+            joinColumns =
+            @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns =
+            @JoinColumn(name = "role_id", referencedColumnName = "role_id"))
     private List<Role> roles;
 
     /**
@@ -80,7 +101,8 @@ public class UserAccount {
      * Balance available on user account.
      */
     @PositiveOrZero(message = "Balance cannot be negative")
-    @Max(value = 100000, message = "Balance should not be greater than 1000 000€")
+    @Max(value = CENT_MILLE,
+            message = "Balance should not be greater than 1000 000€")
     @Column(name = "balance")
     private double balance;
 
@@ -89,8 +111,11 @@ public class UserAccount {
      * They will be necessary for transfer.
      */
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "connection", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "connection_id", referencedColumnName = "user_id"))
+    @JoinTable(name = "connection", joinColumns =
+            @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns =
+            @JoinColumn(name = "connection_id",
+                    referencedColumnName = "user_id"))
     private List<UserAccount> connection;
 
     /**
@@ -134,8 +159,6 @@ public class UserAccount {
         transferLog = pTransferLog;
     }
 
-    private UserAccount() { }
-
     /**
      * Getter ID.
      * @return ID
@@ -146,7 +169,7 @@ public class UserAccount {
 
     /**
      * Setter ID.
-     * ID is auto-generated, should not be accessible. //TODO
+     * ID is auto-generated, should not be accessible.
      * @param pId to set
      */
     private void setId(final int pId) {
@@ -229,7 +252,7 @@ public class UserAccount {
      * Setter roles.
      * @param pRoles to set
      */
-    public void setRoles(List<Role> pRoles) {
+    public void setRoles(final List<Role> pRoles) {
         roles = pRoles;
     }
 

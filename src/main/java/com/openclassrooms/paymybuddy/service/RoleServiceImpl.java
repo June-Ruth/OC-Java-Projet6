@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RoleServiceImpl implements RoleService {
-    //TODO : Logger + exception
+    //TODO : Logger
     /**
      * @see Logger
      */

@@ -3,21 +3,29 @@ package com.openclassrooms.paymybuddy.model.dto;
 import com.openclassrooms.paymybuddy.model.BankAccount;
 
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
+
+import static com.openclassrooms.paymybuddy.constant.Number.CENT_MILLE;
+import static com.openclassrooms.paymybuddy.constant.Number.QUINZE;
+import static com.openclassrooms.paymybuddy.constant.Number.SOIXANTE;
 
 public class UserInfoDTO {
     /**
      * First name.
      */
     @NotNull(message = "First name cannot be null")
-    @Size(max = 15, message = "First name must be less than 15 characters")
+    @Size(max = QUINZE, message = "First name must be less than 15 characters")
     private String firstName;
 
     /**
      * Last name.
      */
     @NotNull(message = "Last name cannot be null")
-    @Size(max = 15, message = "Last name must be less than 15 characters")
+    @Size(max = QUINZE, message = "Last name must be less than 15 characters")
     private String lastName;
 
     /**
@@ -25,7 +33,7 @@ public class UserInfoDTO {
      * Must be unique.
      */
     @Email(message = "Email should be valid")
-    @Size(max = 60, message = "Email must be less than 60 characters")
+    @Size(max = SOIXANTE, message = "Email must be less than 60 characters")
     private String email;
 
     /**
@@ -46,7 +54,8 @@ public class UserInfoDTO {
      * Balance available on user account.
      */
     @PositiveOrZero(message = "Balance cannot be negative")
-    @Max(value = 100000, message = "Balance should not be greater than 1000 000€")
+    @Max(value = CENT_MILLE,
+            message = "Balance should not be greater than 1000 000€")
     private double balance;
 
     /**

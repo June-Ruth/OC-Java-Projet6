@@ -6,10 +6,26 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
+
+import static com.openclassrooms.paymybuddy.constant.Number.CENT_MILLE;
+import static com.openclassrooms.paymybuddy.constant.Number.MILLE;
+import static com.openclassrooms.paymybuddy.constant.Number.SOIXANTE;
 
 /**
  * Transfer object between user or with their bank account.
@@ -47,7 +63,8 @@ public class Transfer {
     /**
      * Description by sender of the transfer.
      */
-    @Size(max = 60, message = "Description must be less than 60 characters")
+    @Size(max = SOIXANTE,
+            message = "Description must be less than 60 characters")
     @Column(name = "description")
     private String description;
 
@@ -64,7 +81,8 @@ public class Transfer {
      * Amount of transfer without fee.
      */
     @Positive(message = "Amount to transfer cannot be zero or negative")
-    @Max(value = 100000, message = "Amount to transfer should not be greater than 100 000€")
+    @Max(value = CENT_MILLE,
+            message = "Amount to transfer should not be greater than 100 000€")
     @Column(name = "amount")
     private double amount;
 
@@ -72,7 +90,7 @@ public class Transfer {
      * Associated fee of the transfer.
      */
     @PositiveOrZero(message = "Fee cannot be negative")
-    @Max(value = 1000, message = "Fee should not be greater than 1000€")
+    @Max(value = MILLE, message = "Fee should not be greater than 1000€")
     @Column(name = "fee")
     private double fee;
 
@@ -110,8 +128,6 @@ public class Transfer {
         fee = pFee;
         transferType = pTransferType;
     }
-
-    private Transfer() { }
 
     /**
      * Getter ID.

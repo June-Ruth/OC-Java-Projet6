@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 public class UserAccountServiceImpl implements UserAccountService {
-    //TODO : Logger + Gestion des exceptions
+    //TODO : Logger
     /**
      * @see Logger
      */

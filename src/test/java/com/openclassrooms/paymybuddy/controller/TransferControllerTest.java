@@ -1,6 +1,8 @@
 package com.openclassrooms.paymybuddy.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openclassrooms.paymybuddy.exception.ElementNotFoundException;
+import com.openclassrooms.paymybuddy.exception.NotEnoughMoneyException;
 import com.openclassrooms.paymybuddy.model.*;
 import com.openclassrooms.paymybuddy.model.dto.SendingTransferDTO;
 import com.openclassrooms.paymybuddy.service.TransferService;
@@ -104,9 +106,30 @@ class TransferControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    //TODO : avec email du receiver qui n'existe pas
+    @DisplayName("Send transfer to a not existing user")
+    @Test
+    @WithMockUser(username = "user@test.com")
+    void sendTransferBetweenUsersAsUsertoNotExistingUserTest() throws Exception {
+        SendingTransferDTO transferDTO = new SendingTransferDTO("admin@test.com", "description1", 100);
+        when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount1User).thenThrow(ElementNotFoundException.class);
+        mockMvc.perform(post("/transfers")
+                .content(new ObjectMapper().writeValueAsString(transferDTO))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
 
-    //TODO : avec amount > balance disponible
+    @DisplayName("Send transfer with not enoug money on balance")
+    @Test
+    @WithMockUser(username = "user@test.com")
+    void sendTransferBetweenUsersAsUserWithAmountSupBalanceTest() throws Exception {
+        SendingTransferDTO transferDTO = new SendingTransferDTO("admin@test.com", "description1", 9000);
+        when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount1User).thenReturn(userAccount2Admin);
+        when(transferService.saveTransfer(any(Transfer.class))).thenThrow(NotEnoughMoneyException.class);
+        mockMvc.perform(post("/transfers")
+                .content(new ObjectMapper().writeValueAsString(transferDTO))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 
     @DisplayName("Send transfer as not a user")
     @Test

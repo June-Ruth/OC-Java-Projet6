@@ -5,8 +5,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class NotEnoughMoneyException extends RuntimeException {
-
-    public NotEnoughMoneyException(String message) {
+    /**
+     * Exception to throw when balance money is not enough for a transfer.
+     * @param message .
+     */
+    public NotEnoughMoneyException(final String message) {
         super(message);
     }
 }

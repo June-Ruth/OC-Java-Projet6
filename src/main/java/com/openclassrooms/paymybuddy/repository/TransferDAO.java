@@ -10,12 +10,30 @@ import java.util.Optional;
 
 @Repository
 public interface TransferDAO extends JpaRepository<Transfer, Integer> {
-
+    /**
+     * Save or update a Transfer.
+     * @param transfer .
+     * @return transfer saved.
+     */
     Transfer save(Transfer transfer);
 
-    Optional<Transfer> findById (int id);
+    /**
+     * Find a transfer by its id.
+     * @param id .
+     * @return Transfer.
+     */
+    Optional<Transfer> findById(int id);
 
-    List<Transfer> findAllBySender (UserAccount userAccount);
+    /**
+     * Find all transfer by their sender.
+     * @param userAccount .
+     * @return List of transfer.
+     */
+    List<Transfer> findAllBySender(UserAccount userAccount);
 
+    /**
+     * Find all transfer in DB.
+     * @return List of transfer.
+     */
     List<Transfer> findAll();
 }

@@ -16,7 +16,7 @@ import java.util.List;
 
 @Service
 public class TransferServiceImpl implements TransferService {
-    //TODO : Logger + Gestion des exceptions
+    //TODO : Logger
     /**
      * @see Logger
      */
@@ -55,13 +55,16 @@ public class TransferServiceImpl implements TransferService {
     @Transactional
     @Override
     public Transfer saveTransfer(final Transfer transfer) {
-        transferDAO.save(transfer);
         UserAccount sender = transfer.getSender();
         UserAccount receiver = transfer.getReceiver();
         double amount = transfer.getAmount();
         double senderBalance = sender.getBalance();
 
-        if (amount > senderBalance) throw new NotEnoughMoneyException(ErrorMessage.NOT_ENOUGH_MONEY); //TODO : TESTS
+        if (amount > senderBalance) {
+            throw new NotEnoughMoneyException(ErrorMessage.NOT_ENOUGH_MONEY);
+        }
+
+        transferDAO.save(transfer);
 
         TransferType type = transfer.getTransferType();
         switch (type) {
@@ -88,7 +91,8 @@ public class TransferServiceImpl implements TransferService {
      */
     @Override
     public Transfer findTransferById(final int transferId) {
-        return transferDAO.findById(transferId).orElseThrow(() -> new ElementNotFoundException(ErrorMessage.TRANSFER_NOT_FOUND));
+        return transferDAO.findById(transferId).orElseThrow(() ->
+                new ElementNotFoundException(ErrorMessage.TRANSFER_NOT_FOUND));
     }
 
     /**

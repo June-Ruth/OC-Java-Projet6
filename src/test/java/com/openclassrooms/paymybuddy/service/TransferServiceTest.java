@@ -1,5 +1,7 @@
 package com.openclassrooms.paymybuddy.service;
 
+import com.openclassrooms.paymybuddy.exception.ElementNotFoundException;
+import com.openclassrooms.paymybuddy.exception.NotEnoughMoneyException;
 import com.openclassrooms.paymybuddy.model.*;
 import com.openclassrooms.paymybuddy.repository.TransferDAO;
 import org.junit.jupiter.api.*;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -70,12 +73,29 @@ class TransferServiceTest {
         assertEquals(900d, userAccount1.getBalance());
     }
 
+    @DisplayName("Save transfer with not enough money")
+    @Test
+    void saveTransferWithNotEnoughMoneyTest() {
+        transfer2.setAmount(2000);
+        when(transferDAO.save(any(Transfer.class))).thenReturn(transfer2);
+        when(userAccountService.saveUserAccount(any(UserAccount.class))).thenReturn(userAccount1);
+        assertThrows(NotEnoughMoneyException.class, () -> transferService.saveTransfer(transfer2));
+    }
+
     @DisplayName("Find a transfer by its id")
     @Test
     void findTransferByIdTest() {
         when(transferDAO.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(transfer1));
         transferService.findTransferById(0);
         verify(transferDAO, times(1)).findById(0);
+    }
+
+    @DisplayName("Find a not existing transfer by its id")
+    @Test
+    void findTransferByIdNotExistsTest() {
+        when(transferDAO.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(null));
+        assertThrows(ElementNotFoundException.class, () -> transferService.findTransferById(0));
+
     }
 
     @DisplayName("Find all transfer by their sender")

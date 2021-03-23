@@ -6,7 +6,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class ElementAlreadyExistsException extends RuntimeException {
 
-    public ElementAlreadyExistsException(String message) {
+    /**
+     * Exception to throw when try to save a already existing element.
+     * @param message .
+     */
+    public ElementAlreadyExistsException(final String message) {
         super(message);
     }
 }

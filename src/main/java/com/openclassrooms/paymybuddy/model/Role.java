@@ -1,7 +1,11 @@
 package com.openclassrooms.paymybuddy.model;
 
-import javax.persistence.*;
-import java.util.Collection;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "role_profile")
@@ -23,14 +27,11 @@ public class Role {
 
     /**
      * Public constructor.
-     * @param name .
+     * @param pName .
      */
-    public Role(String name) {
-        this.name = name;
+    public Role(final String pName) {
+        name = pName;
     }
-
-    private Role() { }
-
     /**
      * Getter ID.
      * @return ID
@@ -38,7 +39,6 @@ public class Role {
     public int getId() {
         return id;
     }
-
     /**
      * Setter ID.
      * ID is auto-generated, should not be accessible.
@@ -47,12 +47,18 @@ public class Role {
     private void setId(final int pId) {
         id = pId;
     }
-
+    /**
+     * Getter Name.
+     * @return name
+     */
     public String getName() {
         return name;
     }
-
-    public void setName(String pName) {
+    /**
+     * Setter Name.
+     * @param pName .
+     */
+    public void setName(final String pName) {
         name = pName;
     }
 }

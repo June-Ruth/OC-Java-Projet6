@@ -14,37 +14,63 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
-
+    /**
+     * @see UserDetailsService
+     */
     private final UserDetailsService userDetailsService;
 
-    public SpringSecurityConfiguration(@Qualifier("userDetailsServiceImpl") final UserDetailsService pUserDetailsService) {
+    /**
+     * Autowired constructor.
+     * @param pUserDetailsService .
+     */
+    public SpringSecurityConfiguration(
+            @Qualifier("userDetailsServiceImpl")
+            final UserDetailsService pUserDetailsService) {
         userDetailsService = pUserDetailsService;
     }
 
+    /**
+     * Define authentication with userDetailsService.
+     * @param auth .
+     * @throws Exception .
+     */
     @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    public void configure(
+            final AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder());
     }
 
+    /**
+     * Configure Spring Security Filter Chaine.
+     * @param http .
+     * @throws Exception .
+     */
     @Override
-    public void configure(HttpSecurity http) throws Exception {
+    public void configure(final HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                    .antMatchers("/login/**", "/logout/**", "/signup/**").permitAll()
-                    .antMatchers("/profile/**", "/transfers/**").hasRole("USER")
-                    .antMatchers("/admin/**").hasRole("ADMIN")
-                    .anyRequest().hasRole("ADMIN")
-                    .and()
-                .formLogin()
-                    //.loginPage("/login")
+                .antMatchers("/login/**", "/logout/**", "/signup/**")
+                    .permitAll()
+                .antMatchers("/profile/**", "/transfers/**")
+                    .hasRole("USER")
+                .antMatchers("/admin/**")
+                    .hasRole("ADMIN")
+                .anyRequest()
+                    .hasRole("ADMIN")
+                .and()
+                    .formLogin()
                     .failureUrl("/login?error=true")
                     .permitAll()
-                    .and()
-                .logout()
-                    .logoutSuccessUrl("/logout.html?logSucc=true")
+                .and()
+                    .logout().logoutSuccessUrl("/logout.html?logSucc=true")
                     .permitAll()
                 .and().csrf().disable();
     }
 
+    /**
+     * Password Encoder.
+     * @return BCryptPasswordEncoder
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

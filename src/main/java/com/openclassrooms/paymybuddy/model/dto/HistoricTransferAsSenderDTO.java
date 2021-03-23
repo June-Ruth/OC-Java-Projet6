@@ -1,7 +1,5 @@
 package com.openclassrooms.paymybuddy.model.dto;
 
-import com.openclassrooms.paymybuddy.model.UserAccount;
-
 public class HistoricTransferAsSenderDTO {
     /**
      * User account's first name and last name which receives the transfer.
@@ -16,33 +14,61 @@ public class HistoricTransferAsSenderDTO {
      */
     private double amount;
 
-    public HistoricTransferAsSenderDTO(String receiver, String description, double amount) {
-        this.receiver = receiver;
-        this.description = description;
-        this.amount = amount;
+    /**
+     * Public constructor.
+     * @param pReceiver .
+     * @param pDescription .
+     * @param pAmount .
+     */
+    public HistoricTransferAsSenderDTO(
+            final String pReceiver,
+            final String pDescription,
+            final double pAmount) {
+        receiver = pReceiver;
+        description = pDescription;
+        amount = pAmount;
     }
 
+    /**
+     * Getter receiver.
+     * @return receiver.
+     */
     public String getReceiver() {
         return receiver;
     }
-
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
+    /**
+     * Setter receiver.
+     * @param pReceiver .
+     */
+    public void setReceiver(final String pReceiver) {
+        receiver = pReceiver;
     }
-
+    /**
+     * Getter description.
+     * @return description.
+     */
     public String getDescription() {
         return description;
     }
-
-    public void setDescription(String description) {
-        this.description = description;
+    /**
+     * Setter description.
+     * @param pDescription .
+     */
+    public void setDescription(final String pDescription) {
+        description = pDescription;
     }
-
+    /**
+     * Getter Amount.
+     * @return amount.
+     */
     public double getAmount() {
         return amount;
     }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
+    /**
+     * Setter amount.
+     * @param pAmount .
+     */
+    public void setAmount(final double pAmount) {
+        amount = pAmount;
     }
 }

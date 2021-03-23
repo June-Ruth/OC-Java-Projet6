@@ -19,21 +19,44 @@ import java.util.List;
 @Service
 @Transactional
 public class UserDetailsServiceImpl implements UserDetailsService {
-
+    /**
+     * @see UserAccountDAO
+     */
     private UserAccountDAO userAccountDAO;
 
-    public UserDetailsServiceImpl(final UserAccountDAO userAccountDAO) {
-        this.userAccountDAO = userAccountDAO;
+    /**
+     * Autowired constructor.
+     * @param pUserAccountDAO .
+     */
+    public UserDetailsServiceImpl(final UserAccountDAO pUserAccountDAO) {
+        userAccountDAO = pUserAccountDAO;
     }
 
+    /**
+     * Define how username is defined.
+     * @param email as username.
+     * @return User.
+     * @throws UsernameNotFoundException .
+     */
     @Override
-    public User loadUserByUsername(final String email) throws UsernameNotFoundException {
-        UserAccount userAccount = userAccountDAO.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.EMAIL_NOT_FOUND));
+    public User loadUserByUsername(final String email)
+            throws UsernameNotFoundException {
+        UserAccount userAccount = userAccountDAO.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        ErrorMessage.EMAIL_NOT_FOUND));
 
-        return new User(userAccount.getEmail(), userAccount.getPassword(), true, true, true, true, getGrantedAuthorities(userAccount.getRoles()));
+        return new User(userAccount.getEmail(),
+                userAccount.getPassword(), true, true, true, true,
+                getGrantedAuthorities(userAccount.getRoles()));
     }
 
-    private List<GrantedAuthority> getGrantedAuthorities(Collection<Role> roles) {
+    /**
+     * Get list of authorities, here as role.
+     * @param roles .
+     * @return list of authorities.
+     */
+    private List<GrantedAuthority> getGrantedAuthorities(
+            final Collection<Role> roles) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (Role role : roles) {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
