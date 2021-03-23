@@ -1,6 +1,7 @@
 package com.openclassrooms.paymybuddy.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openclassrooms.paymybuddy.exception.ElementAlreadyExistsException;
 import com.openclassrooms.paymybuddy.exception.ElementNotFoundException;
 import com.openclassrooms.paymybuddy.model.*;
 import com.openclassrooms.paymybuddy.model.dto.UserInfoWithoutBalanceDTO;
@@ -285,6 +286,7 @@ class ProfileControllerTest {
         String email = "connection@mail.com";
         when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount1User).thenReturn(userAccount2Admin);
         when(userAccountService.findUserAccountById(anyInt())).thenReturn(userAccount1User);
+        when(userAccountService.saveNewConnectionInUserNetwork(anyInt(), anyString())).thenReturn(userAccount1User);
         mockMvc.perform(put("/profile/{user_id}/connections?email=" + email, user_id))
                 .andExpect(status().isCreated());
     }
@@ -321,6 +323,19 @@ class ProfileControllerTest {
         when(userAccountService.findUserAccountById(anyInt())).thenReturn(userAccount1User);
         mockMvc.perform(put("/profile/{user_id}/connections?email=" + email, user_id))
                 .andExpect(status().isForbidden());
+    }
+
+    @DisplayName("Add a connection already existing in network as owner")
+    @Test
+    @WithMockUser(username = "user@test.com")
+    void addNewConnectionAsActualUserAndConnectionAlreadyExistsTest() throws Exception {
+        int user_id = 0;
+        String email = "connection@mail.com";
+        when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount1User).thenReturn(userAccount2Admin);
+        when(userAccountService.findUserAccountById(anyInt())).thenReturn(userAccount1User);
+        when(userAccountService.saveNewConnectionInUserNetwork(anyInt(), anyString())).thenThrow(ElementAlreadyExistsException.class);
+        mockMvc.perform(put("/profile/{user_id}/connections?email=" + email, user_id))
+                .andExpect(status().isBadRequest());
     }
 
     // DELETE CONNECTION TEST //

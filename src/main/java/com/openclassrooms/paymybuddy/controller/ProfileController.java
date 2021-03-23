@@ -179,7 +179,8 @@ public class ProfileController {
      * Allows user to add new connection to their network.
      * @param userId .
      * @param connectionEmail to add
-     * @return 201 created if ok
+     * @return 201 created if ok and list of network updated.
+     * @see UserRestrictedInfoDTO
      */
     @PutMapping(value = "/connections")
     public ResponseEntity<String> addNewConnection(
@@ -206,8 +207,11 @@ public class ProfileController {
                     .toUri();
 
             List<UserRestrictedInfoDTO> network = new ArrayList<>();
-            //TODO à compléter + voir si connection est déjà dans le network
-
+            for (UserAccount user : userAccount.getConnection()) {
+                UserRestrictedInfoDTO userDto = DtoConverter
+                        .convertUserAccountToUserRestrictedInfoDTO(user);
+                network.add(userDto);
+            }
             return ResponseEntity.created(location).body(network.toString());
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -239,7 +243,11 @@ public class ProfileController {
                     userId, connectionId);
 
             List<UserRestrictedInfoDTO> network = new ArrayList<>();
-            //TODO : à compléter
+            for (UserAccount user : userAccount.getConnection()) {
+                UserRestrictedInfoDTO userDto = DtoConverter
+                        .convertUserAccountToUserRestrictedInfoDTO(user);
+                network.add(userDto);
+            }
             return ResponseEntity.ok().body(network.toString());
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

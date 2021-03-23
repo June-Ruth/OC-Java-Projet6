@@ -1,6 +1,7 @@
 package com.openclassrooms.paymybuddy.service;
 
 import com.openclassrooms.paymybuddy.constant.ErrorMessage;
+import com.openclassrooms.paymybuddy.exception.ElementAlreadyExistsException;
 import com.openclassrooms.paymybuddy.exception.ElementNotFoundException;
 import com.openclassrooms.paymybuddy.model.Transfer;
 import com.openclassrooms.paymybuddy.model.UserAccount;
@@ -15,7 +16,6 @@ import java.util.List;
 @Service
 public class UserAccountServiceImpl implements UserAccountService {
     //TODO : Logger + Gestion des exceptions
-    //TODO : adapter controller
     /**
      * @see Logger
      */
@@ -41,7 +41,7 @@ public class UserAccountServiceImpl implements UserAccountService {
      */
     @Override
     public UserAccount findUserAccountById(final int id) {
-        UserAccount userAccount = userAccountDAO.findById(id).orElseThrow(() -> new ElementNotFoundException(ErrorMessage.USER_NOT_FOUND)); //TODO : TEST
+        UserAccount userAccount = userAccountDAO.findById(id).orElseThrow(() -> new ElementNotFoundException(ErrorMessage.USER_NOT_FOUND));
         return userAccount;
     }
 
@@ -93,7 +93,7 @@ public class UserAccountServiceImpl implements UserAccountService {
      */
     @Override
     public List<UserAccount> findUserNetwork(final int id) {
-        UserAccount userAccount = userAccountDAO.findById(id).orElseThrow(() -> new ElementNotFoundException(ErrorMessage.USER_NOT_FOUND)); //TODO : TEST
+        UserAccount userAccount = userAccountDAO.findById(id).orElseThrow(() -> new ElementNotFoundException(ErrorMessage.USER_NOT_FOUND));
         return userAccount.getConnection();
     }
 
@@ -107,9 +107,10 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     public UserAccount saveNewConnectionInUserNetwork(
             final int userId, final String connectionEmail) {
-        UserAccount userAccount = userAccountDAO.findById(userId).orElseThrow(() -> new ElementNotFoundException(ErrorMessage.USER_NOT_FOUND)); //TODO : TEST
-        UserAccount connection = userAccountDAO.findByEmail(connectionEmail).orElseThrow(() -> new ElementNotFoundException(ErrorMessage.USER_NOT_FOUND)); //TODO : TEST
+        UserAccount userAccount = userAccountDAO.findById(userId).orElseThrow(() -> new ElementNotFoundException(ErrorMessage.USER_NOT_FOUND));
+        UserAccount connection = userAccountDAO.findByEmail(connectionEmail).orElseThrow(() -> new ElementNotFoundException(ErrorMessage.USER_NOT_FOUND));
         List<UserAccount> connections = userAccount.getConnection();
+        if (connections.contains(connection)) throw new ElementAlreadyExistsException(ErrorMessage.CONNECTION_ALREADY_EXISTS);
         connections.add(connection);
         userAccountDAO.save(userAccount);
         return connection;
@@ -125,9 +126,10 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     public UserAccount saveDeleteConnectionInUserNetwork(
             final int userId, final int connectionId) {
-        UserAccount userAccount = userAccountDAO.findById(userId).orElseThrow(() -> new ElementNotFoundException(ErrorMessage.USER_NOT_FOUND)); //TODO : TEST
-        UserAccount connection = userAccountDAO.findById(connectionId).orElseThrow(() -> new ElementNotFoundException(ErrorMessage.USER_NOT_FOUND)); //TODO : TEST
+        UserAccount userAccount = userAccountDAO.findById(userId).orElseThrow(() -> new ElementNotFoundException(ErrorMessage.USER_NOT_FOUND));
+        UserAccount connection = userAccountDAO.findById(connectionId).orElseThrow(() -> new ElementNotFoundException(ErrorMessage.USER_NOT_FOUND));
         List<UserAccount> connections = userAccount.getConnection();
+        if (!connections.contains(connection)) throw new ElementNotFoundException(ErrorMessage.USER_NOT_FOUND);
         connections.remove(connection);
         UserAccount newUserAccount = userAccountDAO.save(userAccount);
         return newUserAccount;
@@ -140,7 +142,7 @@ public class UserAccountServiceImpl implements UserAccountService {
      */
     @Override
     public List<Transfer> findUserTransfers(final int id) {
-        UserAccount userAccount = userAccountDAO.findById(id).orElseThrow(() -> new ElementNotFoundException(ErrorMessage.USER_NOT_FOUND)); //TODO : TEST
+        UserAccount userAccount = userAccountDAO.findById(id).orElseThrow(() -> new ElementNotFoundException(ErrorMessage.USER_NOT_FOUND));
         List<Transfer> transfers = userAccount.getTransferLog();
         return transfers;
     }
@@ -153,6 +155,6 @@ public class UserAccountServiceImpl implements UserAccountService {
      */
     @Override
     public UserAccount findUserAccountByEmail(final String email) {
-        return userAccountDAO.findByEmail(email).orElseThrow(() -> new ElementNotFoundException(ErrorMessage.USER_NOT_FOUND)); //TODO : TEST
+        return userAccountDAO.findByEmail(email).orElseThrow(() -> new ElementNotFoundException(ErrorMessage.USER_NOT_FOUND));
     }
 }

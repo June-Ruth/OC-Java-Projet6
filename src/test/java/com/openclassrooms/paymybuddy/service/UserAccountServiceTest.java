@@ -1,5 +1,7 @@
 package com.openclassrooms.paymybuddy.service;
 
+import com.openclassrooms.paymybuddy.exception.ElementAlreadyExistsException;
+import com.openclassrooms.paymybuddy.exception.ElementNotFoundException;
 import com.openclassrooms.paymybuddy.model.*;
 import com.openclassrooms.paymybuddy.repository.RoleDAO;
 import com.openclassrooms.paymybuddy.repository.UserAccountDAO;
@@ -61,6 +63,12 @@ class UserAccountServiceTest {
     }
 
     @Test
+    void findUserAccountByIdNotExistsTest() {
+        when(userAccountDAO.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(null));
+        assertThrows(ElementNotFoundException.class, () -> userAccountService.findUserAccountById(0));
+    }
+
+    @Test
     void findIfUserAccountExistsByEmailTest() {
         when(userAccountDAO.existsByEmail(anyString())).thenReturn(true);
         userAccountService.findIfUserAccountExistsByEmail("test@test.com");
@@ -103,12 +111,39 @@ class UserAccountServiceTest {
     }
 
     @Test
+    void findUserNotExistsNetworkTest() {
+        when(userAccountDAO.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(null));
+        assertThrows(ElementNotFoundException.class, () -> userAccountService.findUserNetwork(0));
+    }
+
+    @Test
     void saveNewConnectionInUserNetworkTest() {
         when(userAccountDAO.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(userAccount1));
         when(userAccountDAO.findByEmail(anyString())).thenReturn(java.util.Optional.ofNullable(userAccount2));
         when(userAccountDAO.save(any(UserAccount.class))).thenReturn(userAccount1);
         assertNotNull(userAccountService.saveNewConnectionInUserNetwork(0, "test@test.com"));
         verify(userAccountDAO, times(1)).save(userAccount1);
+    }
+
+    @Test
+    void saveNewConnectionInUserNotExistsNetworkTest() {
+        when(userAccountDAO.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(null));
+        assertThrows(ElementNotFoundException.class, () -> userAccountService.saveNewConnectionInUserNetwork(0, "test@test.com"));
+    }
+
+    @Test
+    void saveNewConnectionNotExistsInUserNotExistsTest() {
+        when(userAccountDAO.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(userAccount1));
+        when(userAccountDAO.findByEmail(anyString())).thenReturn(java.util.Optional.ofNullable(null));
+        assertThrows(ElementNotFoundException.class, () -> userAccountService.saveNewConnectionInUserNetwork(0, "test@test.com"));
+    }
+
+    @Test
+    void saveNewConnectionAlreadyExistsInUserNotExistsTest() {
+        network.add(userAccount2);
+        when(userAccountDAO.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(userAccount1));
+        when(userAccountDAO.findByEmail(anyString())).thenReturn(java.util.Optional.ofNullable(userAccount2));
+        assertThrows(ElementAlreadyExistsException.class, () -> userAccountService.saveNewConnectionInUserNetwork(0, "test@test.com"));
     }
 
     @Test
@@ -124,9 +159,33 @@ class UserAccountServiceTest {
     }
 
     @Test
+    void saveDeleteConnectionInUserNotExistsNetworkTest() {
+        when(userAccountDAO.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(null));
+        assertThrows(ElementNotFoundException.class, () -> userAccountService.saveDeleteConnectionInUserNetwork(0, 1));
+    }
+
+    @Test
+    void saveDeleteConnectionNotExistsInUserNetworkTest() {
+        when(userAccountDAO.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(userAccount1)).thenReturn(java.util.Optional.ofNullable(null));
+        assertThrows(ElementNotFoundException.class, () -> userAccountService.saveDeleteConnectionInUserNetwork(0, 1));
+    }
+
+    @Test
+    void saveDeleteConnectionNotConnectInUserNetworkTest() {
+        when(userAccountDAO.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(userAccount1)).thenReturn(java.util.Optional.ofNullable(userAccount2));
+        assertThrows(ElementNotFoundException.class, () -> userAccountService.saveDeleteConnectionInUserNetwork(0, 1));
+    }
+
+    @Test
     void findUserTransfersTest() {
         when(userAccountDAO.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(userAccount1));
         assertEquals(userAccount1.getTransferLog().size(), userAccountService.findUserTransfers(0).size());
+    }
+
+    @Test
+    void findUserNotExistsTransfersTest() {
+        when(userAccountDAO.findById(anyInt())).thenReturn(java.util.Optional.ofNullable(null));
+        assertThrows(ElementNotFoundException.class, () -> userAccountService.findUserTransfers(0));
     }
 
     @Test
@@ -136,4 +195,9 @@ class UserAccountServiceTest {
         verify(userAccountDAO, times(1)).findByEmail(anyString());
     }
 
+    @Test
+    void findUserAccountNotExistsByEmail() {
+        when(userAccountDAO.findByEmail(anyString())).thenReturn(java.util.Optional.ofNullable(null));
+        assertThrows(ElementNotFoundException.class, () -> userAccountService.findUserAccountByEmail("test@test.com"));
+    }
 }
