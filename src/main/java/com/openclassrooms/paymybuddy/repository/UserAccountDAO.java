@@ -9,16 +9,44 @@ import java.util.Optional;
 
 @Repository
 public interface UserAccountDAO extends JpaRepository<UserAccount, Integer> {
-
+    /**
+     * Find a user account by its id.
+     * @param id .
+     * @return Optional UserAccount
+     */
     Optional<UserAccount> findById(int id);
 
-    boolean existsByEmail (String email);
+    /**
+     * Check if a userAccount exists with this email.
+     * @param email .
+     * @return true if exists.
+     */
+    boolean existsByEmail(String email);
 
+    /**
+     * Find all user account in database.
+     * @return list of all user account.
+     */
     List<UserAccount> findAll();
 
+    /**
+     * Save and update a userAccount.
+     * @param userAccount .
+     * @return user account saved.
+     */
     UserAccount save(UserAccount userAccount);
 
-    boolean deleteById (int id);
+    /**
+     * Delete a user account by its id.
+     * @param id .
+     * @return true if deleted.
+     */
+    boolean deleteById(int id);
 
+    /**
+     * Find a user account by its email.
+     * @param email .
+     * @return Optional UserAccount
+     */
     Optional<UserAccount> findByEmail(String email);
 }
