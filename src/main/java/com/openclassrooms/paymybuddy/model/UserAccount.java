@@ -160,6 +160,11 @@ public class UserAccount {
     }
 
     /**
+     * Private constructor.
+     */
+    private UserAccount() {}
+
+    /**
      * Getter ID.
      * @return ID
      */

@@ -32,6 +32,12 @@ public class Role {
     public Role(final String pName) {
         name = pName;
     }
+
+    /**
+     * private constructor.
+     */
+    private Role() {}
+
     /**
      * Getter ID.
      * @return ID

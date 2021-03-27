@@ -130,6 +130,11 @@ public class Transfer {
     }
 
     /**
+     * Private constructor.
+     */
+    private Transfer() { }
+
+    /**
      * Getter ID.
      * @return ID
      */
