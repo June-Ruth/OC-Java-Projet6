@@ -110,7 +110,6 @@ public class UserAccount {
      * Set of all established connection with other user account.
      * They will be necessary for transfer.
      */
-    @JsonBackReference
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "connection", joinColumns =
             @JoinColumn(name = "user_id", referencedColumnName = "user_id"),

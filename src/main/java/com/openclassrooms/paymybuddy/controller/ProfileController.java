@@ -101,19 +101,15 @@ public class ProfileController {
         UserAccount userAccountPrincipal =
                 userAccountService.findUserAccountByEmail(
                         principal.getUsername());
-        UserAccount userAccountOld =
+        UserAccount userAccount =
                 userAccountService.findUserAccountById(userId);
-       if (userAccountOld == userAccountPrincipal) {
-            UserAccount userAccount =
-                    new UserAccount(userInfoDTO.getFirstName(),
-                            userInfoDTO.getLastName(),
-                            userInfoDTO.getEmail(),
-                            passwordEncoder.encode(userInfoDTO.getPassword()),
-                            userAccountOld.getRoles(),
-                            userInfoDTO.getBankAccount(),
-                            userAccountOld.getBalance(),
-                            userAccountOld.getConnection(),
-                            userAccountOld.getTransferLog());
+       if (userAccount == userAccountPrincipal) {
+           userAccount.setFirstName(userInfoDTO.getFirstName());
+           userAccount.setLastName(userInfoDTO.getLastName());
+           userAccount.setEmail(userInfoDTO.getEmail());
+           userAccount.setPassword(passwordEncoder.encode(userInfoDTO.getPassword()));
+           userAccount.setBankAccount(userInfoDTO.getBankAccount());
+
             userAccountService.updateUserAccount(userAccount);
             return ResponseEntity.ok().body(userAccount.toString());
         } else {

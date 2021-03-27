@@ -1,5 +1,6 @@
 package com.openclassrooms.paymybuddy.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -47,6 +48,7 @@ public class Transfer {
      * @see UserAccount
      */
     @Valid
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "sender_user_id")
     private UserAccount sender;
@@ -56,6 +58,7 @@ public class Transfer {
      * @see UserAccount
      */
     @Valid
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "receiver_user_id")
     private UserAccount receiver;

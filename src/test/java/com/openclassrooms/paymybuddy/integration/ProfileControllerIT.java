@@ -86,7 +86,7 @@ class ProfileControllerIT {
 
         UserInfoWithoutBalanceDTO userUpdate = new UserInfoWithoutBalanceDTO();
         userUpdate.setFirstName("FirstName2");
-        userUpdate.setLastName("LastName2");
+        userUpdate.setLastName("Test");
         userUpdate.setEmail("user2@test.com");
         userUpdate.setPassword("password");
         userUpdate.setBankAccount(bankAccount);

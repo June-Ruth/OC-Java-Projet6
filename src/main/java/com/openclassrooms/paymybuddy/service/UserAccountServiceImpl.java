@@ -67,7 +67,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     /**
-     * Save a new user account or save update modification of user account.
+     * Update modification of user account.
      * @param userAccount .
      * @return user account saved.
      */
@@ -77,6 +77,11 @@ public class UserAccountServiceImpl implements UserAccountService {
         return userAccountDAO.save(userAccount);
     }
 
+    /**
+     * Save a new user account.
+     * @param userAccount .
+     * @return user account saved.
+     */
     @Transactional
     @Override
     public UserAccount saveNewUserAccount(final UserAccount userAccount) {
