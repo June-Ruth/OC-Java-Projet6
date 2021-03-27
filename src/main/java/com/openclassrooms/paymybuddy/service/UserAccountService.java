@@ -24,11 +24,17 @@ public interface UserAccountService {
      */
     List<UserAccount> findAllUserAccounts();
     /**
-     * Save a new user account or save update modification of user account.
+     * Update modification of user account.
+     * @param userAccount .
+     * @return user account updated.
+     */
+    UserAccount updateUserAccount(UserAccount userAccount);
+    /**
+     * Save a new user account.
      * @param userAccount .
      * @return user account saved.
      */
-    UserAccount saveUserAccount(UserAccount userAccount);
+    UserAccount saveNewUserAccount(UserAccount userAccount);
     /**
      * Delete a user account by its id.
      * @param id .

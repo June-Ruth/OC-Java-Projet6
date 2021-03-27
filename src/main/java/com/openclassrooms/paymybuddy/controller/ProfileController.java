@@ -114,7 +114,7 @@ public class ProfileController {
                             userAccountOld.getBalance(),
                             userAccountOld.getConnection(),
                             userAccountOld.getTransferLog());
-            userAccountService.saveUserAccount(userAccount);
+            userAccountService.updateUserAccount(userAccount);
             return ResponseEntity.ok().body(userAccount.toString());
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

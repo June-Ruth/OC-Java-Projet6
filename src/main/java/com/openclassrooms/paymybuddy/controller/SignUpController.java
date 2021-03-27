@@ -80,7 +80,7 @@ public class SignUpController {
                 userInfo.getBankAccount(),
                 0, connections, transfers);
 
-        userAccountService.saveUserAccount(userAccount);
+        userAccountService.saveNewUserAccount(userAccount);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().replacePath("/profile")

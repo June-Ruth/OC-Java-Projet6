@@ -24,6 +24,9 @@ public final class ErrorMessage {
     public static final String CONNECTION_ALREADY_EXISTS =
             "Connection you try to add is already existing.";
 
+    public static final String EMAIL_ALREADY_EXISTS =
+            "An account with this email is already existing.";
+
     /**
      * Private constructor.
      */

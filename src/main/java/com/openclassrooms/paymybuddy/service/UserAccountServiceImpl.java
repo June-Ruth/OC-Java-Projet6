@@ -73,8 +73,19 @@ public class UserAccountServiceImpl implements UserAccountService {
      */
     @Transactional
     @Override
-    public UserAccount saveUserAccount(final UserAccount userAccount) {
+    public UserAccount updateUserAccount(final UserAccount userAccount) {
         return userAccountDAO.save(userAccount);
+    }
+
+    @Transactional
+    @Override
+    public UserAccount saveNewUserAccount(final UserAccount userAccount) {
+        String email = userAccount.getEmail();
+        if (findIfUserAccountExistsByEmail(email)) {
+            throw new ElementAlreadyExistsException(ErrorMessage.EMAIL_ALREADY_EXISTS);
+        } else {
+            return userAccountDAO.save(userAccount);
+        }
     }
 
     /**

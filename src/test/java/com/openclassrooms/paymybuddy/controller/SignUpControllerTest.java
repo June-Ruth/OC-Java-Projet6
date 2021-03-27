@@ -6,7 +6,6 @@ import com.openclassrooms.paymybuddy.model.dto.UserInfoWithoutBalanceDTO;
 import com.openclassrooms.paymybuddy.service.RoleService;
 import com.openclassrooms.paymybuddy.service.UserAccountService;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +79,7 @@ class SignUpControllerTest {
     void createAccountWithValidArgsAndEmailNotExistsTest() throws Exception {
         Role userRole = new Role("ROLE_USER");
         when(roleService.findRoleByName(anyString())).thenReturn(userRole);
-        when(userAccountService.saveUserAccount(any(UserAccount.class))).thenReturn(userAccount1User);
+        when(userAccountService.updateUserAccount(any(UserAccount.class))).thenReturn(userAccount1User);
         mockMvc.perform(post("/signup")
                 .content(new ObjectMapper().writeValueAsString(userInfoWithoutBalanceDTO))
                 .contentType(MediaType.APPLICATION_JSON))

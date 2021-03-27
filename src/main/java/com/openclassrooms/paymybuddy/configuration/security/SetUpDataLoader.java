@@ -74,7 +74,7 @@ public class SetUpDataLoader
 
             if (!userAccountService.findIfUserAccountExistsByEmail(
                     userAccount.getEmail())) {
-                userAccountService.saveUserAccount(userAccount);
+                userAccountService.updateUserAccount(userAccount);
             }
 
             List<Role> roles2 = new ArrayList<>();
@@ -89,7 +89,7 @@ public class SetUpDataLoader
 
             if (!userAccountService.findIfUserAccountExistsByEmail(
                     userAccount2.getEmail())) {
-                userAccountService.saveUserAccount(userAccount2);
+                userAccountService.updateUserAccount(userAccount2);
             }
             //TODO : ... until here.
 

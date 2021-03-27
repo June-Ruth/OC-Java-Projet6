@@ -126,7 +126,7 @@ class ProfileControllerTest {
         int user_id = 0;
         when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount1User);
         when(userAccountService.findUserAccountById(anyInt())).thenReturn(userAccount1User);
-        when(userAccountService.saveUserAccount(any(UserAccount.class))).thenReturn(userAccount1User);
+        when(userAccountService.updateUserAccount(any(UserAccount.class))).thenReturn(userAccount1User);
         mockMvc.perform(put("/profile/{user_id}", user_id)
                 .content(new ObjectMapper().writeValueAsString(userInfoWithoutBalanceDTO))
                 .contentType(MediaType.APPLICATION_JSON))

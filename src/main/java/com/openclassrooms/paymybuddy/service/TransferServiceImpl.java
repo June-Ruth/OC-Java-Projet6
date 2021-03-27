@@ -70,13 +70,13 @@ public class TransferServiceImpl implements TransferService {
         switch (type) {
             case TRANSFER_WITH_BANK:
                 sender.setBalance(senderBalance - amount);
-                userAccountService.saveUserAccount(sender);
+                userAccountService.updateUserAccount(sender);
                 break;
             case TRANSFER_BETWEEN_USER:
                 sender.setBalance(senderBalance - amount);
                 receiver.setBalance(receiver.getBalance() + amount);
-                userAccountService.saveUserAccount(sender);
-                userAccountService.saveUserAccount(receiver);
+                userAccountService.updateUserAccount(sender);
+                userAccountService.updateUserAccount(receiver);
                 break;
                 default: break;
         }

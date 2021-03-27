@@ -3,11 +3,8 @@ package com.openclassrooms.paymybuddy.service;
 import com.openclassrooms.paymybuddy.exception.ElementAlreadyExistsException;
 import com.openclassrooms.paymybuddy.exception.ElementNotFoundException;
 import com.openclassrooms.paymybuddy.model.*;
-import com.openclassrooms.paymybuddy.repository.RoleDAO;
 import com.openclassrooms.paymybuddy.repository.UserAccountDAO;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -85,14 +82,14 @@ class UserAccountServiceTest {
     @Test
     void saveUserAccountTest() {
         when(userAccountDAO.save(any(UserAccount.class))).thenReturn(userAccount1);
-        userAccountService.saveUserAccount(userAccount1);
+        userAccountService.updateUserAccount(userAccount1);
         verify(userAccountDAO, times(1)).save(userAccount1);
     }
 
     @Test
     void updateUserAccountTest() {
         when(userAccountDAO.save(any(UserAccount.class))).thenReturn(userAccount1);
-        userAccountService.saveUserAccount(userAccount1);
+        userAccountService.updateUserAccount(userAccount1);
         verify(userAccountDAO, times(1)).save(userAccount1);
     }
 
