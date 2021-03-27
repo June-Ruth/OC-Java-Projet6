@@ -41,7 +41,7 @@ class AdminControllerIT {
 
     @DisplayName("Get all user account information as admin")
     @Test
-    @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
+    @WithMockUser(username = "admin1@test.com", roles = {"ADMIN"})
     void getAllUserAccountsAsAdminIT() throws Exception {
         mockMvc.perform(get("/admin/users"))
                 .andExpect(status().isOk())
@@ -50,7 +50,7 @@ class AdminControllerIT {
 
     @DisplayName("Get all user account information as user")
     @Test
-    @WithMockUser(username = "user@test.com")
+    @WithMockUser(username = "user2@test.com")
     void getAllUserAccountsAsUserIT() throws Exception {
         mockMvc.perform(get("/admin/users"))
                 .andExpect(status().isForbidden());
@@ -66,7 +66,7 @@ class AdminControllerIT {
 
     @DisplayName("Get all transfers information as admin")
     @Test
-    @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
+    @WithMockUser(username = "admin1@test.com", roles = {"ADMIN"})
     void getAllTransfersAsAdminIT() throws Exception {
         mockMvc.perform(get("/admin/transfers"))
                 .andExpect(status().isOk());
@@ -74,7 +74,7 @@ class AdminControllerIT {
 
     @DisplayName("Get all transfers information as user")
     @Test
-    @WithMockUser(username = "user@test.com")
+    @WithMockUser(username = "user2@test.com")
     void getAllTransfersAsUserIT() throws Exception  {
         mockMvc.perform(get("/admin/transfers"))
                 .andExpect(status().isForbidden());

@@ -98,7 +98,7 @@ class UserAccountServiceTest {
 
     @Test
     void deleteUserAccountByIdTest() {
-        when(userAccountDAO.deleteById(anyInt())).thenReturn(true);
+        doNothing().when(userAccountDAO).deleteById(anyInt());
         userAccountService.deleteUserAccountById(0);
         verify(userAccountDAO, times(1)).deleteById(0);
     }

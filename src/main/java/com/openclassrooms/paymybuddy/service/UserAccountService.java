@@ -32,9 +32,8 @@ public interface UserAccountService {
     /**
      * Delete a user account by its id.
      * @param id .
-     * @return true if delete.
      */
-    boolean deleteUserAccountById(int id);
+    void deleteUserAccountById(int id);
     /**
      * Find user's network.
      * @param id .

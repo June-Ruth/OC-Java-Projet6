@@ -39,9 +39,8 @@ public interface UserAccountDAO extends JpaRepository<UserAccount, Integer> {
     /**
      * Delete a user account by its id.
      * @param id .
-     * @return true if deleted.
      */
-    boolean deleteById(int id);
+    void deleteById(int id);
 
     /**
      * Find a user account by its email.

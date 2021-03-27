@@ -80,12 +80,11 @@ public class UserAccountServiceImpl implements UserAccountService {
     /**
      * Delete a user account by its id.
      * @param id .
-     * @return true if delete.
      */
     @Transactional
     @Override
-    public boolean deleteUserAccountById(final int id) {
-        return userAccountDAO.deleteById(id);
+    public void deleteUserAccountById(final int id) {
+        userAccountDAO.deleteById(id);
     }
 
     /**

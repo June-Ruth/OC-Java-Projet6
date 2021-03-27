@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -195,7 +196,7 @@ class ProfileControllerTest {
         int user_id = 0;
         when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount1User);
         when(userAccountService.findUserAccountById(anyInt())).thenReturn(userAccount1User);
-        when(userAccountService.deleteUserAccountById(anyInt())).thenReturn(true);
+        doNothing().when(userAccountService).deleteUserAccountById(anyInt());
         mockMvc.perform(delete("/profile/{user_id}", user_id))
                 .andExpect(status().isOk());
     }
@@ -392,7 +393,7 @@ class ProfileControllerTest {
     @DisplayName("Get all transfers as owner (sender and receiver)")
     @Test
     @WithMockUser(username = "user@test.com")
-    void getAllUserTransfersAsActualUser() throws Exception {
+    void getAllUserTransfersAsActualUserTest() throws Exception {
         int user_id = 0;
         when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount1User);
         when(userAccountService.findUserAccountById(anyInt())).thenReturn(userAccount1User);
@@ -404,7 +405,7 @@ class ProfileControllerTest {
     @DisplayName("Get all transfers not as user")
     @Test
     @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
-    void getAllUserTransfersAsNotUser() throws Exception {
+    void getAllUserTransfersAsNotUserTest() throws Exception {
         int user_id = 0;
         mockMvc.perform(get("/profile/{user_id}/transfers", user_id))
                 .andExpect(status().isForbidden());
@@ -413,7 +414,7 @@ class ProfileControllerTest {
     @DisplayName("Get all transfers not as owner")
     @Test
     @WithMockUser(username = "user@test.com")
-    void getAllUserTransfersAsDifferentUser() throws Exception {
+    void getAllUserTransfersAsDifferentUserTest() throws Exception {
         int user_id = 0;
         when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount1User);
         when(userAccountService.findUserAccountById(anyInt())).thenReturn(userAccount2Admin);
@@ -424,7 +425,7 @@ class ProfileControllerTest {
     @DisplayName("Get all transfers of inexisting user")
     @Test
     @WithMockUser(username = "user@test.com")
-    void getAllUserTransfersAsNotExistsUser() throws Exception {
+    void getAllUserTransfersAsNotExistsUserTest() throws Exception {
         int user_id = 0;
         when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount1User);
         when(userAccountService.findUserAccountById(anyInt())).thenThrow(ElementNotFoundException.class);
