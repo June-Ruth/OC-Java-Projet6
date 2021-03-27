@@ -109,7 +109,7 @@ class TransferControllerTest {
     @DisplayName("Send transfer to a not existing user")
     @Test
     @WithMockUser(username = "user@test.com")
-    void sendTransferBetweenUsersAsUsertoNotExistingUserTest() throws Exception {
+    void sendTransferBetweenUsersAsUserToNotExistingUserTest() throws Exception {
         SendingTransferDTO transferDTO = new SendingTransferDTO("admin@test.com", "description1", 100);
         when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount1User).thenThrow(ElementNotFoundException.class);
         mockMvc.perform(post("/transfers")
@@ -118,7 +118,7 @@ class TransferControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @DisplayName("Send transfer with not enoug money on balance")
+    @DisplayName("Send transfer with not enough money on balance")
     @Test
     @WithMockUser(username = "user@test.com")
     void sendTransferBetweenUsersAsUserWithAmountSupBalanceTest() throws Exception {
