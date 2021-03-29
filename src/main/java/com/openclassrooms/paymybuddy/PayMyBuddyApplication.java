@@ -2,14 +2,16 @@ package com.openclassrooms.paymybuddy;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
-@EntityScan(basePackages = "com.openclassrooms.paymybuddy.model")
+@EnableSwagger2
 public class PayMyBuddyApplication {
-
-	public static void main(String[] args) {
+	/**
+	 * Main Application.
+	 * @param args .
+	 */
+	public static void main(final String[] args) {
 		SpringApplication.run(PayMyBuddyApplication.class, args);
 	}
-
 }

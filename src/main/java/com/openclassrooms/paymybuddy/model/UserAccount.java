@@ -1,7 +1,30 @@
 package com.openclassrooms.paymybuddy.model;
 
-import javax.persistence.*;
-import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
+import java.util.List;
+
+import static com.openclassrooms.paymybuddy.constant.Number.CENT_MILLE;
+import static com.openclassrooms.paymybuddy.constant.Number.QUINZE;
+import static com.openclassrooms.paymybuddy.constant.Number.SOIXANTE;
 
 /**
  * User account used for application.
@@ -16,20 +39,70 @@ public class UserAccount {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "user_account_id")
+    @Column(name = "user_id")
     private int id;
 
     /**
-     * Associated person.
-     * @see Person
+     * First name.
      */
-    @OneToOne
-    @JoinColumn(name = "user_person_id")
-    private Person user;
+    @NotNull(message = "First name cannot be null")
+    @Size(max = QUINZE, message = "First name must be less than 15 characters")
+    @Column(name = "first_name")
+    private String firstName;
+
+    /**
+     * Last name.
+     */
+    @NotNull(message = "Last name cannot be null")
+    @Size(max = QUINZE, message = "Last name must be less than 15 characters")
+    @Column(name = "last_name")
+    private String lastName;
+
+    /**
+     * Email.
+     * Must be unique.
+     */
+    @Email(message = "Email should be valid")
+    @Size(max = SOIXANTE, message = "Email must be less than 60 characters")
+    @Column(name = "email", unique = true)
+    private String email;
+
+    /**
+     * Password.
+     */
+    @NotNull(message = "Password cannot be null")
+    @Column(name = "password")
+    private String password;
+
+    /**
+     * Security role : User / User and Admin.
+     * @see Role
+     */
+    @NotNull
+    @ManyToMany
+    @JoinTable(name = "user_role",
+            joinColumns =
+            @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns =
+            @JoinColumn(name = "role_id", referencedColumnName = "role_id"))
+    private List<Role> roles;
+
+    /**
+     * Associated bank account.
+     * @see BankAccount
+     */
+    @Valid
+    @NotNull(message = "Bank account cannot be null")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "bank_account_id", nullable = false)
+    private BankAccount bankAccount;
 
     /**
      * Balance available on user account.
      */
+    @PositiveOrZero(message = "Balance cannot be negative")
+    @Max(value = CENT_MILLE,
+            message = "Balance should not be greater than 1000 000€")
     @Column(name = "balance")
     private double balance;
 
@@ -37,35 +110,59 @@ public class UserAccount {
      * Set of all established connection with other user account.
      * They will be necessary for transfer.
      */
-    @ManyToMany
-    @JoinTable(name = "connection", joinColumns = @JoinColumn(name = "user_account_id", referencedColumnName = "user_account_id"),
-            inverseJoinColumns = @JoinColumn(name = "connection_account_id", referencedColumnName = "user_account_id"))
-    private Set<UserAccount> connection;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "connection", joinColumns =
+            @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns =
+            @JoinColumn(name = "connection_id",
+                    referencedColumnName = "user_id"))
+    private List<UserAccount> connection;
 
     /**
      * Historic log off all transfer send and receive.
      * @see Transfer
      */
+    @JsonBackReference
     @OneToMany(targetEntity = Transfer.class, mappedBy = "sender")
-    private Set<Transfer> transferLog;
+    private List<Transfer> transferLog;
 
     /**
      * Public constructor.
      * Parameters are all needed and non nullable.
-     * @param pUser .
+     * @param pFirstName .
+     * @param pLastName .
+     * @param pEmail .
+     * @param pPassword .
+     * @param pRoles .
+     * @param pBankAccount .
      * @param pBalance .
      * @param pConnection .
      * @param pTransferLog .
      */
-    public UserAccount(final Person pUser,
+    public UserAccount(final String pFirstName,
+                       final String pLastName,
+                       final String pEmail,
+                       final String pPassword,
+                       final List<Role> pRoles,
+                       final BankAccount pBankAccount,
                        final double pBalance,
-                       final Set<UserAccount> pConnection,
-                       final Set<Transfer> pTransferLog) {
-        user = pUser;
+                       final List<UserAccount> pConnection,
+                       final List<Transfer> pTransferLog) {
+        firstName = pFirstName;
+        lastName = pLastName;
+        email = pEmail;
+        password = pPassword;
+        roles = pRoles;
+        bankAccount = pBankAccount;
         balance = pBalance;
         connection = pConnection;
         transferLog = pTransferLog;
     }
+
+    /**
+     * Private constructor.
+     */
+    private UserAccount() { }
 
     /**
      * Getter ID.
@@ -85,19 +182,99 @@ public class UserAccount {
     }
 
     /**
-     * Getter user.
-     * @return user
+     * Getter first name.
+     * @return first name
      */
-    public Person getUser() {
-        return user;
+    public String getFirstName() {
+        return firstName;
     }
 
     /**
-     * Setter user.
-     * @param pUser to set
+     * Setter first name.
+     * @param pFirstName to set.
      */
-    public void setUser(final Person pUser) {
-        user = pUser;
+    public void setFirstName(final String pFirstName) {
+        firstName = pFirstName;
+    }
+
+    /**
+     * Getter last name.
+     * @return last name
+     */
+    public String getLastName() {
+        return lastName;
+    }
+
+    /**
+     * Setter last name.
+     * @param pLastName to set
+     */
+    public void setLastName(final String pLastName) {
+        lastName = pLastName;
+    }
+
+    /**
+     * Getter email.
+     * @return email
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * Setter email.
+     * @param pEmail to set
+     */
+    public void setEmail(final String pEmail) {
+        email = pEmail;
+    }
+
+    /**
+     * Getter password.
+     * @return password
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Setter password.
+     * @param pPassword to set
+     */
+    public void setPassword(final String pPassword) {
+        password = pPassword;
+    }
+
+    /**
+     * Getter roles.
+     * @return list of roleProfile
+     */
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    /**
+     * Setter roles.
+     * @param pRoles to set
+     */
+    public void setRoles(final List<Role> pRoles) {
+        roles = pRoles;
+    }
+
+    /**
+     * Getter Bank Account.
+     * @return bank account
+     */
+    public BankAccount getBankAccount() {
+        return bankAccount;
+    }
+
+    /**
+     * Setter Bank Account.
+     * @param pBankAccount to set
+     */
+    public void setBankAccount(final BankAccount pBankAccount) {
+        bankAccount = pBankAccount;
     }
 
     /**
@@ -120,7 +297,7 @@ public class UserAccount {
      * Getter connection.
      * @return connection as Set of user account
      */
-    public Set<UserAccount> getConnection() {
+    public List<UserAccount> getConnection() {
         return connection;
     }
 
@@ -128,7 +305,7 @@ public class UserAccount {
      * Setter connection.
      * @param pConnection as Set of user account to set
      */
-    public void setConnection(final Set<UserAccount> pConnection) {
+    public void setConnection(final List<UserAccount> pConnection) {
         connection = pConnection;
     }
 
@@ -136,7 +313,7 @@ public class UserAccount {
      * Getter transfer log.
      * @return transfer log as Set of transfer.
      */
-    public Set<Transfer> getTransferLog() {
+    public List<Transfer> getTransferLog() {
         return transferLog;
     }
 
@@ -144,7 +321,7 @@ public class UserAccount {
      * Setter transfer log.
      * @param pTransferLog as Set pf transfer to set
      */
-    public void setTransferLog(final Set<Transfer> pTransferLog) {
+    public void setTransferLog(final List<Transfer> pTransferLog) {
         transferLog = pTransferLog;
     }
 }

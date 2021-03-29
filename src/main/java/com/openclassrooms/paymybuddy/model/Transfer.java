@@ -1,14 +1,32 @@
 package com.openclassrooms.paymybuddy.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
+
+import static com.openclassrooms.paymybuddy.constant.Number.CENT_MILLE;
+import static com.openclassrooms.paymybuddy.constant.Number.MILLE;
+import static com.openclassrooms.paymybuddy.constant.Number.SOIXANTE;
 
 /**
  * Transfer object between user or with their bank account.
@@ -29,46 +47,61 @@ public class Transfer {
      * User account which sends the transfer.
      * @see UserAccount
      */
+    @Valid
+    @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "sender_user_account_id")
+    @JoinColumn(name = "sender_user_id")
     private UserAccount sender;
 
     /**
      * User account which receives the transfer.
      * @see UserAccount
      */
+    @Valid
+    @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "receiver_user_account_id")
+    @JoinColumn(name = "receiver_user_id")
     private UserAccount receiver;
 
     /**
      * Description by sender of the transfer.
      */
+    @Size(max = SOIXANTE,
+            message = "Description must be less than 60 characters")
     @Column(name = "description")
     private String description;
 
     /**
      * Date of transfer.
      */
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "transfer_date")
     private LocalDate date;
 
     /**
      * Amount of transfer without fee.
      */
-    @Column(name = "amout")
+    @Positive(message = "Amount to transfer cannot be zero or negative")
+    @Max(value = CENT_MILLE,
+            message = "Amount to transfer should not be greater than 100 000€")
+    @Column(name = "amount")
     private double amount;
 
     /**
      * Associated fee of the transfer.
      */
+    @PositiveOrZero(message = "Fee cannot be negative")
+    @Max(value = MILLE, message = "Fee should not be greater than 1000€")
     @Column(name = "fee")
     private double fee;
 
-    /**
+     /**
      * Type of transfer.
      * @see TransferType
      */
+    @Enumerated(EnumType.STRING)
     @Column(name = "transfer_type")
     private TransferType transferType;
 
@@ -98,6 +131,11 @@ public class Transfer {
         fee = pFee;
         transferType = pTransferType;
     }
+
+    /**
+     * Private constructor.
+     */
+    private Transfer() { }
 
     /**
      * Getter ID.
