@@ -168,12 +168,23 @@ class TransferControllerTest {
     getTransfer() Test
      */
 
-    @DisplayName("Get a transfer which exists as sender or receiver user")
+    @DisplayName("Get a transfer which exists as sender user")
     @Test
     @WithMockUser(username = "user@test.com")
-    void getTransferAsSenderOrReceiverAndTransferExistsTest() throws Exception {
+    void getTransferAsSenderAndTransferExistsTest() throws Exception {
         int transfer_id = 0;
         when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount1User);
+        when(transferService.findTransferById(any(Integer.class))).thenReturn(transferBetweenUsers);
+        mockMvc.perform(get("/transfers/{transfer_id}", transfer_id))
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("Get a transfer which exists as receiver user")
+    @Test
+    @WithMockUser(username = "user@test.com")
+    void getTransferAsReceiverAndTransferExistsTest() throws Exception {
+        int transfer_id = 0;
+        when(userAccountService.findUserAccountByEmail(anyString())).thenReturn(userAccount2Admin);
         when(transferService.findTransferById(any(Integer.class))).thenReturn(transferBetweenUsers);
         mockMvc.perform(get("/transfers/{transfer_id}", transfer_id))
                 .andExpect(status().isOk());

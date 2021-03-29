@@ -81,9 +81,16 @@ class UserAccountServiceTest {
 
     @Test
     void saveUserAccountTest() {
+        when(userAccountDAO.existsByEmail(anyString())).thenReturn(false);
         when(userAccountDAO.save(any(UserAccount.class))).thenReturn(userAccount1);
-        userAccountService.updateUserAccount(userAccount1);
+        userAccountService.saveNewUserAccount(userAccount1);
         verify(userAccountDAO, times(1)).save(userAccount1);
+    }
+
+    @Test
+    void saveUserAccountAlreadyExistTest() {
+        when(userAccountDAO.existsByEmail(anyString())).thenReturn(true);
+        assertThrows(ElementAlreadyExistsException.class, () -> userAccountService.saveNewUserAccount(userAccount1));
     }
 
     @Test
