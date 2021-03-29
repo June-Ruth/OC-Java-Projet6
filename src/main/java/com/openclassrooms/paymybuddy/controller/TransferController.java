@@ -9,6 +9,7 @@ import com.openclassrooms.paymybuddy.model.dto.SendingTransferDTO;
 import com.openclassrooms.paymybuddy.model.dto.TransferInformationFullDto;
 import com.openclassrooms.paymybuddy.service.TransferService;
 import com.openclassrooms.paymybuddy.service.UserAccountService;
+import com.openclassrooms.paymybuddy.util.DtoConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -122,13 +123,9 @@ public class TransferController {
         List<HistoricTransferAsSenderDTO> historicTransfersAsSender =
                 new ArrayList<>();
         for (Transfer transfer : transfers) {
-            String name = transfer.getReceiver().getFirstName()
-                    .concat(" ").concat(
-                            transfer.getReceiver().getLastName());
             HistoricTransferAsSenderDTO historicTransfer =
-                    new HistoricTransferAsSenderDTO(name,
-                            transfer.getDescription(),
-                            transfer.getAmount());
+                    DtoConverter.convertTransferToHistoricTransferAsSenderDto(
+                            transfer);
             historicTransfersAsSender.add(historicTransfer);
         }
         return historicTransfersAsSender;
@@ -154,20 +151,10 @@ public class TransferController {
 
             if (transfer.getReceiver() == userAccount
                     || transfer.getSender() == userAccount) {
-                String senderName = transfer.getSender().getFirstName()
-                        .concat(" ").concat(
-                                transfer.getSender().getLastName());
-                String receiverName = transfer.getReceiver().getFirstName()
-                        .concat(" ").concat(
-                                transfer.getReceiver().getLastName());
                 TransferInformationFullDto transferInformationFullDto =
-                        new TransferInformationFullDto(senderName,
-                                receiverName,
-                                transfer.getDescription(),
-                                transfer.getDate(),
-                                transfer.getAmount(),
-                                transfer.getFee(),
-                                transfer.getTransferType());
+                        DtoConverter
+                                .convertTransferToTransferInformationFullDto(
+                                        transfer);
                 return ResponseEntity.ok()
                         .body(transferInformationFullDto.toString());
             } else {

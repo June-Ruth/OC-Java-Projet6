@@ -162,7 +162,7 @@ public class UserAccount {
     /**
      * Private constructor.
      */
-    private UserAccount() {}
+    private UserAccount() { }
 
     /**
      * Getter ID.

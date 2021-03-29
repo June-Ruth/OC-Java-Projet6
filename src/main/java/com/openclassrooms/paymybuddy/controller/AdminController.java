@@ -61,6 +61,7 @@ public class AdminController {
                     DtoConverter.convertUserAccountToUserInfoDTO(userAccount);
             result.add(userDTO);
         }
+        LOGGER.info("Get user list.");
         return result;
     }
 
@@ -75,21 +76,9 @@ public class AdminController {
         List<TransferInformationFullDto> transferInformationFullDtoList
                 = new ArrayList<>();
         for (Transfer transfer : transfers) {
-            String senderName = transfer.getSender().getFirstName()
-                    .concat(" ")
-                    .concat(transfer.getSender().getLastName());
-            String receiverName =
-                    transfer.getReceiver().getFirstName()
-                            .concat(" ")
-                            .concat(transfer.getReceiver().getLastName());
             TransferInformationFullDto transferInformationFullDto =
-                    new TransferInformationFullDto(senderName,
-                            receiverName,
-                            transfer.getDescription(),
-                            transfer.getDate(),
-                            transfer.getAmount(),
-                            transfer.getFee(),
-                            transfer.getTransferType());
+                    DtoConverter.convertTransferToTransferInformationFullDto(
+                            transfer);
             transferInformationFullDtoList.add(transferInformationFullDto);
         }
         return transferInformationFullDtoList;

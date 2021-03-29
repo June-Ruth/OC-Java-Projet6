@@ -87,7 +87,8 @@ public class UserAccountServiceImpl implements UserAccountService {
     public UserAccount saveNewUserAccount(final UserAccount userAccount) {
         String email = userAccount.getEmail();
         if (findIfUserAccountExistsByEmail(email)) {
-            throw new ElementAlreadyExistsException(ErrorMessage.EMAIL_ALREADY_EXISTS);
+            throw new ElementAlreadyExistsException(
+                    ErrorMessage.EMAIL_ALREADY_EXISTS);
         } else {
             return userAccountDAO.save(userAccount);
         }

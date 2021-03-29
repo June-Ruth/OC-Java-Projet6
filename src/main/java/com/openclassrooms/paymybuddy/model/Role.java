@@ -36,7 +36,7 @@ public class Role {
     /**
      * private constructor.
      */
-    private Role() {}
+    private Role() { }
 
     /**
      * Getter ID.

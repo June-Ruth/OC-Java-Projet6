@@ -1,7 +1,6 @@
 package com.openclassrooms.paymybuddy.controller;
 
 import com.openclassrooms.paymybuddy.model.Role;
-import com.openclassrooms.paymybuddy.model.Transfer;
 import com.openclassrooms.paymybuddy.model.UserAccount;
 import com.openclassrooms.paymybuddy.model.dto.UserInfoWithoutBalanceDTO;
 import com.openclassrooms.paymybuddy.service.RoleService;
@@ -65,8 +64,6 @@ public class SignUpController {
     @PostMapping(consumes = {"application/json"})
     public ResponseEntity<UserAccount> createUserAccount(
             @Valid @RequestBody final UserInfoWithoutBalanceDTO userInfo) {
-        List<UserAccount> connections = new ArrayList<>();
-        List<Transfer> transfers = new ArrayList<>();
         Role role = roleService.findRoleByName("ROLE_USER");
         List<Role> userRole = new ArrayList<>();
         userRole.add(role);
@@ -78,7 +75,7 @@ public class SignUpController {
                 passwordEncoder.encode(userInfo.getPassword()),
                 userRole,
                 userInfo.getBankAccount(),
-                0, connections, transfers);
+                0, new ArrayList<>(), new ArrayList<>());
 
         userAccountService.saveNewUserAccount(userAccount);
 
@@ -87,7 +84,7 @@ public class SignUpController {
                 .path("/{user_id}")
                 .buildAndExpand(userAccount.getId())
                 .toUri();
-
+        LOGGER.info("Create user account for user " + userInfo.toString());
         return ResponseEntity.created(location).body(userAccount);
     }
 }

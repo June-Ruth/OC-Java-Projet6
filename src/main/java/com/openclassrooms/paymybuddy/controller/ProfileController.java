@@ -107,7 +107,8 @@ public class ProfileController {
            userAccount.setFirstName(userInfoDTO.getFirstName());
            userAccount.setLastName(userInfoDTO.getLastName());
            userAccount.setEmail(userInfoDTO.getEmail());
-           userAccount.setPassword(passwordEncoder.encode(userInfoDTO.getPassword()));
+           userAccount.setPassword(passwordEncoder.encode(
+                   userInfoDTO.getPassword()));
            userAccount.setBankAccount(userInfoDTO.getBankAccount());
 
             userAccountService.updateUserAccount(userAccount);
