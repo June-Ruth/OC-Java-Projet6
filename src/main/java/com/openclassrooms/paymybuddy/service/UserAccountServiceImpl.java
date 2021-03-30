@@ -76,7 +76,8 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Transactional
     @Override
     public UserAccount updateUserAccount(final UserAccount userAccount) {
-        LOGGER.info("Try to update a user account with information :\t" + userAccount.toString());
+        LOGGER.info("Try to update a user account with information :\t"
+                + userAccount.toString());
         return userAccountDAO.save(userAccount);
     }
 
@@ -97,7 +98,8 @@ public class UserAccountServiceImpl implements UserAccountService {
             throw new ElementAlreadyExistsException(
                     ErrorMessage.EMAIL_ALREADY_EXISTS);
         } else {
-            LOGGER.info("Success to save user account with information :\t" + userAccount.toString());
+            LOGGER.info("Success to save user account with information :\t"
+                    + userAccount.toString());
             return userAccountDAO.save(userAccount);
         }
     }

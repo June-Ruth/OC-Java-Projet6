@@ -91,7 +91,8 @@ public class AdminController {
         }
 
         StringBuilder sb = new StringBuilder();
-        for (TransferInformationFullDto transferDto : transferInformationFullDtoList) {
+        for (TransferInformationFullDto transferDto
+                : transferInformationFullDtoList) {
             sb.append(transferDto.toString());
             sb.append("\t");
         }

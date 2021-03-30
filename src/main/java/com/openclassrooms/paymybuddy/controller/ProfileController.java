@@ -66,7 +66,8 @@ public class ProfileController {
     @GetMapping
     public ResponseEntity<String> getUserAccountInfo(
             @PathVariable final int userId) {
-        LOGGER.info("Try to get user account information for user id : " + userId);
+        LOGGER.info("Try to get user account information for user id : "
+                + userId);
         User principal = (User) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
         UserAccount userAccountPrincipal =
@@ -78,10 +79,12 @@ public class ProfileController {
         if (userAccount == userAccountPrincipal) {
             UserInfoDTO result =
                     DtoConverter.convertUserAccountToUserInfoDTO(userAccount);
-            LOGGER.info("Success to get user account information for user id : " + userId + "\t" + result.toString());
+            LOGGER.info("Success to get user account information for user id : "
+                    + userId + "\t" + result.toString());
             return ResponseEntity.ok().body(result.toString());
         } else {
-            LOGGER.error("Forbidden access to get user information for user id : " + userId);
+            LOGGER.error("Forbidden access to get user information "
+                    + "for user id : " + userId);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
@@ -98,8 +101,9 @@ public class ProfileController {
     public ResponseEntity<String> updateUserAccountInfo(
             @PathVariable final int userId,
             @Valid @RequestBody final UserInfoWithoutBalanceDTO userInfoDTO) {
-        LOGGER.info("Try to update user account information for user id : " + userId
-                + " and information to update are : \t" + userInfoDTO.toString());
+        LOGGER.info("Try to update user account information for user id : "
+                + userId + " and information to update are : \t"
+                + userInfoDTO.toString());
         User principal = (User) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
         UserAccount userAccountPrincipal =
@@ -116,11 +120,13 @@ public class ProfileController {
            userAccount.setBankAccount(userInfoDTO.getBankAccount());
 
            userAccountService.updateUserAccount(userAccount);
-           LOGGER.info("Success to update user account information for user id : " + userId
-                    + "and new information are " + userAccount.toString());
+           LOGGER.info("Success to update user account information "
+                   + "for user id : " + userId
+                   + "and new information are " + userAccount.toString());
            return ResponseEntity.ok().body(userAccount.toString());
         } else {
-            LOGGER.error("Forbidden access to update user information for user id : " + userId);
+            LOGGER.error("Forbidden access to update user information "
+                    + "for user id : " + userId);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
@@ -143,10 +149,12 @@ public class ProfileController {
                 userAccountService.findUserAccountById(userId);
         if (userAccount == userAccountPrincipal) {
             userAccountService.deleteUserAccountById(userId);
-            LOGGER.info("Success to delete user account account for user id : " + userId);
+            LOGGER.info("Success to delete user account account "
+                    + "for user id : " + userId);
             return ResponseEntity.ok().body("Account was deleted");
         } else {
-            LOGGER.error("Forbidden access to delete user account for user id : " + userId);
+            LOGGER.error("Forbidden access to delete user account "
+                    + "for user id : " + userId);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
@@ -177,10 +185,12 @@ public class ProfileController {
                         .convertUserAccountToUserRestrictedInfoDTO(user);
                 result.add(userDTO);
             }
-            LOGGER.info("Success to get user network for user id : " + userId + "\t" + result.toString());
+            LOGGER.info("Success to get user network for user id : "
+                    + userId + "\t" + result.toString());
             return ResponseEntity.ok().body(result.toString());
         } else {
-            LOGGER.error("Forbidden access to get user network for user id : " + userId);
+            LOGGER.error("Forbidden access to get user network for user id : "
+                    + userId);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
@@ -196,8 +206,8 @@ public class ProfileController {
     public ResponseEntity<String> addNewConnection(
             @PathVariable final int userId,
             @RequestParam(name = "email") final String connectionEmail) {
-        LOGGER.info("Try to add new connection to network of user id : " + userId
-                + " and connection email : " + connectionEmail);
+        LOGGER.info("Try to add new connection to network of user id : "
+                + userId + " and connection email : " + connectionEmail);
         User principal = (User) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
         UserAccount userAccountPrincipal =
@@ -225,12 +235,14 @@ public class ProfileController {
                 network.add(userDto);
             }
 
-            LOGGER.info("Success to add connection to network of user id : " + userId + "\t"
+            LOGGER.info("Success to add connection to network of user id : "
+                    + userId + "\t"
                     + " and connection email :" + connectionEmail);
 
             return ResponseEntity.created(location).body(network.toString());
         } else {
-            LOGGER.error("Forbidden access to add new connection to network of user id : " + userId);
+            LOGGER.error("Forbidden access to"
+                    + " add new connection to network of user id : " + userId);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
@@ -245,7 +257,8 @@ public class ProfileController {
     public ResponseEntity<String> deleteConnection(
             @PathVariable final int userId,
             @PathVariable final int connectionId) {
-        LOGGER.info("Try to delete connection id : " + connectionId + " of user id : " + userId);
+        LOGGER.info("Try to delete connection id : "
+                + connectionId + " of user id : " + userId);
         User principal = (User) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
         UserAccount userAccountPrincipal =
@@ -265,10 +278,12 @@ public class ProfileController {
                         .convertUserAccountToUserRestrictedInfoDTO(user);
                 network.add(userDto);
             }
-            LOGGER.info("Success to delete connection id : " + connectionId + " of user id : " + userId);
+            LOGGER.info("Success to delete connection id : "
+                    + connectionId + " of user id : " + userId);
             return ResponseEntity.ok().body(network.toString());
         } else {
-            LOGGER.error("Forbidden access to delete connection of user id : " + userId);
+            LOGGER.error("Forbidden access to delete connection of user id : "
+                    + userId);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
@@ -296,7 +311,8 @@ public class ProfileController {
             LOGGER.info("Success to get transfer log for user id : " + userId);
             return ResponseEntity.ok().body(transfers.toString());
         } else {
-            LOGGER.error("Forbidden access to get transfer log for user id : " + userId);
+            LOGGER.error("Forbidden access to get transfer log for user id : "
+                    + userId);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }

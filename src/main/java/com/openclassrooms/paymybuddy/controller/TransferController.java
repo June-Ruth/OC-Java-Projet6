@@ -66,7 +66,8 @@ public class TransferController {
     @PostMapping(consumes = {"application/json"})
     public ResponseEntity<Transfer> sendTransfer(
             @Valid @RequestBody final SendingTransferDTO transferDTO) {
-        LOGGER.info("Try to send a transfer with transfer information : \t" + transferDTO.toString());
+        LOGGER.info("Try to send a transfer with transfer information :\t"
+                + transferDTO.toString());
         User principal = (User) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
         UserAccount sender = userAccountService
@@ -142,7 +143,8 @@ public class TransferController {
     @GetMapping(value = "/{transferId}")
     public ResponseEntity<String> getTransfer(
             @PathVariable final int transferId) {
-        LOGGER.info("Try to access all information about transfer id : " + transferId);
+        LOGGER.info("Try to access all information about transfer id : "
+                + transferId);
         Transfer transfer = transferService.findTransferById(transferId);
         User principal = (User) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
@@ -156,8 +158,9 @@ public class TransferController {
                     DtoConverter
                             .convertTransferToTransferInformationFullDto(
                                     transfer);
-            LOGGER.info("Success to get information about transfer id : " + transferId
-                    + "\t" + transferInformationFullDto.toString());
+            LOGGER.info("Success to get information about transfer id : "
+                    + transferId + "\t"
+                    + transferInformationFullDto.toString());
             return ResponseEntity.ok()
                     .body(transferInformationFullDto.toString());
         } else {

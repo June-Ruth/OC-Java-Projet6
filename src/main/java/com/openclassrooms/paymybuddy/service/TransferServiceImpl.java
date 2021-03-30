@@ -106,7 +106,8 @@ public class TransferServiceImpl implements TransferService {
      */
     @Override
     public List<Transfer> findTransferBySender(final UserAccount sender) {
-        LOGGER.info("Try to find all transfer done by user :\t" + sender.toString());
+        LOGGER.info("Try to find all transfer done by user :\t"
+                + sender.toString());
         return transferDAO.findAllBySender(sender);
     }
 

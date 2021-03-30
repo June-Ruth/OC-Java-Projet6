@@ -95,6 +95,5 @@ class SignUpControllerIT {
                 .content(new ObjectMapper().writeValueAsString(newUser))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
-        //TODO : pas géré à l'heure actuelle -> NestedServletException
     }
 }

@@ -201,16 +201,6 @@ class TransferControllerTest {
                 .andExpect(status().isForbidden());
     }
 
-    @DisplayName("Get a transfer which doesn't exist")
-    @Test
-    @WithMockUser(username = "user@test.com")
-    void getTransferAsUserAndTransferNotExistsTest() throws Exception {
-        int transfer_id = 0;
-        when(transferService.findTransferById(any(Integer.class))).thenReturn(null);
-        mockMvc.perform(get("/transfers/{transfer_id}", transfer_id))
-                .andExpect(status().isNotFound());
-    }
-
     @DisplayName("Get a transfer as not a user")
     @Test
     @WithMockUser(username = "test@test.com", roles = {""})
