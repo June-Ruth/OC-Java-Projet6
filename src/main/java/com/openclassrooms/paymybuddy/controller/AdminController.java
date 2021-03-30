@@ -53,6 +53,7 @@ public class AdminController {
      */
     @GetMapping(value = "/users")
     public List<UserInfoDTO> getAllUserAccounts() {
+        LOGGER.info("Try to get all user accounts");
         List<UserAccount> userAccounts =
                 userAccountService.findAllUserAccounts();
         List<UserInfoDTO> result = new ArrayList<>();
@@ -61,7 +62,14 @@ public class AdminController {
                     DtoConverter.convertUserAccountToUserInfoDTO(userAccount);
             result.add(userDTO);
         }
-        LOGGER.info("Get user list.");
+
+        StringBuilder sb = new StringBuilder();
+        for (UserInfoDTO userInfoDTO : result) {
+            sb.append(userInfoDTO.toString());
+            sb.append("\t");
+        }
+
+        LOGGER.info("Return list with all user accounts :\t" + sb.toString());
         return result;
     }
 
@@ -72,6 +80,7 @@ public class AdminController {
      */
     @GetMapping(value = "/transfers")
     public List<TransferInformationFullDto> getAllTransfers() {
+        LOGGER.info("Try to get all transfers");
         List<Transfer> transfers = transferService.findAllTransfers();
         List<TransferInformationFullDto> transferInformationFullDtoList
                 = new ArrayList<>();
@@ -81,6 +90,15 @@ public class AdminController {
                             transfer);
             transferInformationFullDtoList.add(transferInformationFullDto);
         }
+
+        StringBuilder sb = new StringBuilder();
+        for (TransferInformationFullDto transferDto : transferInformationFullDtoList) {
+            sb.append(transferDto.toString());
+            sb.append("\t");
+        }
+
+        LOGGER.info("Return list with all transfers :\t" + sb.toString());
+
         return transferInformationFullDtoList;
     }
 
