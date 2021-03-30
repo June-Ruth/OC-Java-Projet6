@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RoleServiceImpl implements RoleService {
-    //TODO : Logger
     /**
      * @see Logger
      */
@@ -35,6 +34,7 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public Role findRoleByName(final String name) {
+        LOGGER.info("Try to get role with name : " + name);
         return roleDAO.findByName(name);
     }
 
@@ -46,6 +46,7 @@ public class RoleServiceImpl implements RoleService {
     @Transactional
     @Override
     public Role saveRole(final Role role) {
+        LOGGER.info("Try to save following role :\t" + role.toString());
         return roleDAO.save(role);
     }
 }

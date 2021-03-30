@@ -33,7 +33,6 @@ import java.util.List;
 @RestController
 @RequestMapping("transfers")
 public class TransferController {
-    //TODO : Logger
     /**
      * @see Logger
      */

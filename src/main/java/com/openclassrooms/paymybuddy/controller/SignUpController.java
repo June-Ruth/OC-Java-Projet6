@@ -23,7 +23,6 @@ import java.util.List;
 @RestController
 @RequestMapping("signup")
 public class SignUpController {
-    //TODO : Logger
     /**
      * @see Logger
      */
