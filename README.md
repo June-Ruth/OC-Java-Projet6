@@ -3,7 +3,7 @@ Pay My Buddy allows user to simply transfer money to other friends through the a
 
 ## Information
 * Author : Noémie BARRAL - DA Java Student - OpenClassrooms
-* Release date :
+* Release date : 30 mars 2021
 
 ### Running Application
 * The application works on port 8080
