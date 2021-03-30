@@ -154,4 +154,18 @@ public class UserInfoDTO {
         balance = pBalance;
     }
 
+    /**
+     * To String.
+     * @return string information
+     */
+    @Override
+    public String toString() {
+        return "UserInfoDTO{"
+                + "firstName='" + firstName + '\''
+                + ", lastName='" + lastName + '\''
+                + ", email='" + email + '\''
+                + ", bankAccount=" + bankAccount
+                + ", balance=" + balance
+                + '}';
+    }
 }

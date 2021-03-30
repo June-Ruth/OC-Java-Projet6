@@ -71,4 +71,17 @@ public class HistoricTransferAsSenderDTO {
     public void setAmount(final double pAmount) {
         amount = pAmount;
     }
+
+    /**
+     * To String.
+     * @return string information
+     */
+    @Override
+    public String toString() {
+        return "HistoricTransferAsSenderDTO{"
+                + "receiver='" + receiver + '\''
+                + ", description='" + description + '\''
+                + ", amount=" + amount
+                + '}';
+    }
 }

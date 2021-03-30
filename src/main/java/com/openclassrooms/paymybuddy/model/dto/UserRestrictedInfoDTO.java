@@ -78,4 +78,16 @@ public class UserRestrictedInfoDTO {
         email = pEmail;
     }
 
+    /**
+     * To String.
+     * @return string information
+     */
+    @Override
+    public String toString() {
+        return "UserRestrictedInfoDTO{"
+                + "firstName='" + firstName + '\''
+                + ", lastName='" + lastName + '\''
+                + ", email='" + email + '\''
+                + '}';
+    }
 }
