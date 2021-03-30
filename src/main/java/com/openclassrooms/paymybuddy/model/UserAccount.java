@@ -173,15 +173,6 @@ public class UserAccount {
     }
 
     /**
-     * Setter ID.
-     * ID is auto-generated, should not be accessible.
-     * @param pId to set
-     */
-    private void setId(final int pId) {
-        id = pId;
-    }
-
-    /**
      * Getter first name.
      * @return first name
      */

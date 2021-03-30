@@ -146,15 +146,6 @@ public class Transfer {
     }
 
     /**
-     * Setter ID.
-     * ID is auto-generated, should not be accessible.
-     * @param pId to set
-     */
-    private void setId(final int pId) {
-        id = pId;
-    }
-
-    /**
      * Getter sender.
      * @return sender
      */

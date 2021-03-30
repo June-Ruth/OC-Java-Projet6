@@ -79,6 +79,14 @@ public class BankAccount {
     private BankAccount() { }
 
     /**
+     * Getter id.
+     * @return id
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
      * Getter RIB.
      * @return RIB
      */

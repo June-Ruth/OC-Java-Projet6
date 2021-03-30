@@ -10,6 +10,7 @@ Pay My Buddy allows user to simply transfer money to other friends through the a
 * The application works with a MySQL database on port 3306
 * Before running, add username and password access for database in application.properties
 * Run script create_database.sql before the first use.
+* For demo version, the SetUpDataLoader class create 1 user and 1 admin. Suppress the TODO part before production.
 
 ### Running Tests
 * Before running, add username and password access for database in integration-test.properties

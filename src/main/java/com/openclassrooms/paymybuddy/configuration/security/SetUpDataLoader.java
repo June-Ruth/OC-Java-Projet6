@@ -60,7 +60,7 @@ public class SetUpDataLoader
             Role userRole = createRoleIfNotFound("ROLE_USER");
 
 
-            // TODO : suppress before ending from here...
+            // TODO : suppress for production from here...
             List<Role> roles = new ArrayList<>();
             roles.add(adminRole);
             roles.add(userRole);
