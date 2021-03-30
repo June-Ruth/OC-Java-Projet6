@@ -265,4 +265,22 @@ public class Transfer {
     public void setTransferType(final TransferType pTransferType) {
         transferType = pTransferType;
     }
+
+    /**
+     * To String.
+     * @return string information
+     */
+    @Override
+    public String toString() {
+        return "Transfer{"
+                + "id=" + id
+                + ", sender=" + sender
+                + ", receiver=" + receiver
+                + ", description='" + description + '\''
+                + ", date=" + date
+                + ", amount=" + amount
+                + ", fee=" + fee
+                + ", transferType=" + transferType
+                + '}';
+    }
 }

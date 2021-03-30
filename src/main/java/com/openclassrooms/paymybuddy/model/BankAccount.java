@@ -142,5 +142,18 @@ public class BankAccount {
         bic = pBic;
     }
 
-
+    /**
+     * To String.
+     * @return string information
+     */
+    @Override
+    public String toString() {
+        return "BankAccount{"
+                + "id=" + id
+                + ", rib='" + rib + '\''
+                + ", bank='" + bank + '\''
+                + ", iban='" + iban + '\''
+                + ", bic='" + bic + '\''
+                + '}';
+    }
 }

@@ -67,4 +67,16 @@ public class Role {
     public void setName(final String pName) {
         name = pName;
     }
+
+    /**
+     * To String.
+     * @return string information
+     */
+    @Override
+    public String toString() {
+        return "Role{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + '}';
+    }
 }

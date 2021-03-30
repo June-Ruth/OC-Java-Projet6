@@ -324,4 +324,21 @@ public class UserAccount {
     public void setTransferLog(final List<Transfer> pTransferLog) {
         transferLog = pTransferLog;
     }
+
+    /**
+     * To String.
+     * @return string information
+     */
+    @Override
+    public String toString() {
+        return "UserAccount{"
+                + "id=" + id
+                + ", firstName='" + firstName + '\''
+                + ", lastName='" + lastName + '\''
+                + ", email='" + email + '\''
+                + ", roles=" + roles
+                + ", bankAccount=" + bankAccount
+                + ", balance=" + balance
+                + '}';
+    }
 }
