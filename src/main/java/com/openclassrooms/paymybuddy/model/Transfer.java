@@ -146,15 +146,6 @@ public class Transfer {
     }
 
     /**
-     * Setter ID.
-     * ID is auto-generated, should not be accessible.
-     * @param pId to set
-     */
-    private void setId(final int pId) {
-        id = pId;
-    }
-
-    /**
      * Getter sender.
      * @return sender
      */
@@ -264,5 +255,23 @@ public class Transfer {
      */
     public void setTransferType(final TransferType pTransferType) {
         transferType = pTransferType;
+    }
+
+    /**
+     * To String.
+     * @return string information
+     */
+    @Override
+    public String toString() {
+        return "Transfer{"
+                + "id=" + id
+                + ", sender=" + sender
+                + ", receiver=" + receiver
+                + ", description='" + description + '\''
+                + ", date=" + date
+                + ", amount=" + amount
+                + ", fee=" + fee
+                + ", transferType=" + transferType
+                + '}';
     }
 }

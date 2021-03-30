@@ -33,7 +33,6 @@ import java.util.List;
 @RestController
 @RequestMapping("transfers")
 public class TransferController {
-    //TODO : Logger
     /**
      * @see Logger
      */
@@ -67,7 +66,8 @@ public class TransferController {
     @PostMapping(consumes = {"application/json"})
     public ResponseEntity<Transfer> sendTransfer(
             @Valid @RequestBody final SendingTransferDTO transferDTO) {
-
+        LOGGER.info("Try to send a transfer with transfer information :\t"
+                + transferDTO.toString());
         User principal = (User) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
         UserAccount sender = userAccountService
@@ -101,7 +101,7 @@ public class TransferController {
                 .path("/{transfer_id}")
                 .buildAndExpand(transfer.getId())
                 .toUri();
-
+        LOGGER.info("Success to send transfer : \t" + transfer.toString());
         return ResponseEntity.created(location).body(transfer);
     }
 
@@ -112,6 +112,7 @@ public class TransferController {
      */
     @GetMapping
     public List<HistoricTransferAsSenderDTO> getMyTransfersAsSender() {
+        LOGGER.info("Try to get user transfer done as sender");
         User principal = (User) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
         String email = principal.getUsername();
@@ -128,6 +129,7 @@ public class TransferController {
                             transfer);
             historicTransfersAsSender.add(historicTransfer);
         }
+        LOGGER.info("Success to get user transfer done as sender");
         return historicTransfersAsSender;
     }
 
@@ -141,27 +143,30 @@ public class TransferController {
     @GetMapping(value = "/{transferId}")
     public ResponseEntity<String> getTransfer(
             @PathVariable final int transferId) {
+        LOGGER.info("Try to access all information about transfer id : "
+                + transferId);
         Transfer transfer = transferService.findTransferById(transferId);
-        if (transfer != null) {
-            User principal = (User) SecurityContextHolder
-                    .getContext().getAuthentication().getPrincipal();
-            String email = principal.getUsername();
-            UserAccount userAccount =
-                    userAccountService.findUserAccountByEmail(email);
+        User principal = (User) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+        String email = principal.getUsername();
+        UserAccount userAccount =
+                userAccountService.findUserAccountByEmail(email);
 
-            if (transfer.getReceiver() == userAccount
-                    || transfer.getSender() == userAccount) {
-                TransferInformationFullDto transferInformationFullDto =
-                        DtoConverter
-                                .convertTransferToTransferInformationFullDto(
-                                        transfer);
-                return ResponseEntity.ok()
-                        .body(transferInformationFullDto.toString());
-            } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
+        if (transfer.getReceiver() == userAccount
+                || transfer.getSender() == userAccount) {
+            TransferInformationFullDto transferInformationFullDto =
+                    DtoConverter
+                            .convertTransferToTransferInformationFullDto(
+                                    transfer);
+            LOGGER.info("Success to get information about transfer id : "
+                    + transferId + "\t"
+                    + transferInformationFullDto.toString());
+            return ResponseEntity.ok()
+                    .body(transferInformationFullDto.toString());
+        } else {
+            LOGGER.error("Forbidden access to transfer : " + transferId);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return ResponseEntity.notFound().build();
     }
 
 }

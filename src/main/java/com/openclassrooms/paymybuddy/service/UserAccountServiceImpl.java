@@ -15,7 +15,6 @@ import java.util.List;
 
 @Service
 public class UserAccountServiceImpl implements UserAccountService {
-    //TODO : Logger
     /**
      * @see Logger
      */
@@ -41,6 +40,7 @@ public class UserAccountServiceImpl implements UserAccountService {
      */
     @Override
     public UserAccount findUserAccountById(final int id) {
+        LOGGER.info("Try to find user with id : " + id);
         UserAccount userAccount = userAccountDAO.findById(id)
                 .orElseThrow(() -> new ElementNotFoundException(
                         ErrorMessage.USER_NOT_FOUND));
@@ -54,6 +54,7 @@ public class UserAccountServiceImpl implements UserAccountService {
      */
     @Override
     public boolean findIfUserAccountExistsByEmail(final String email) {
+        LOGGER.info("Check if a user exists with email : " + email);
         return userAccountDAO.existsByEmail(email);
     }
 
@@ -63,6 +64,7 @@ public class UserAccountServiceImpl implements UserAccountService {
      */
     @Override
     public List<UserAccount> findAllUserAccounts() {
+        LOGGER.info("Try to find all user accounts in db");
         return userAccountDAO.findAll();
     }
 
@@ -74,6 +76,8 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Transactional
     @Override
     public UserAccount updateUserAccount(final UserAccount userAccount) {
+        LOGGER.info("Try to update a user account with information :\t"
+                + userAccount.toString());
         return userAccountDAO.save(userAccount);
     }
 
@@ -85,11 +89,17 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Transactional
     @Override
     public UserAccount saveNewUserAccount(final UserAccount userAccount) {
+        LOGGER.info("Try to save user account with information :\t"
+                + userAccount.toString());
         String email = userAccount.getEmail();
         if (findIfUserAccountExistsByEmail(email)) {
+            LOGGER.error("Cannot save user account, an account with email "
+                    + userAccount.getEmail() + " is already existing");
             throw new ElementAlreadyExistsException(
                     ErrorMessage.EMAIL_ALREADY_EXISTS);
         } else {
+            LOGGER.info("Success to save user account with information :\t"
+                    + userAccount.toString());
             return userAccountDAO.save(userAccount);
         }
     }
@@ -101,6 +111,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Transactional
     @Override
     public void deleteUserAccountById(final int id) {
+        LOGGER.info("Try to delete user account with id :" + id);
         userAccountDAO.deleteById(id);
     }
 
@@ -111,9 +122,11 @@ public class UserAccountServiceImpl implements UserAccountService {
      */
     @Override
     public List<UserAccount> findUserNetwork(final int id) {
+        LOGGER.info("Try to find user network for id : " + id);
         UserAccount userAccount = userAccountDAO.findById(id)
                 .orElseThrow(() -> new ElementNotFoundException(
                         ErrorMessage.USER_NOT_FOUND));
+        LOGGER.info("Success to find user network for id : " + id);
         return userAccount.getConnection();
     }
 
@@ -127,6 +140,8 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     public UserAccount saveNewConnectionInUserNetwork(
             final int userId, final String connectionEmail) {
+        LOGGER.info("Try to save a new connection with email : "
+                + connectionEmail + "for user id : " + userId);
         UserAccount userAccount = userAccountDAO.findById(userId)
                 .orElseThrow(() -> new ElementNotFoundException(
                         ErrorMessage.USER_NOT_FOUND));
@@ -135,11 +150,15 @@ public class UserAccountServiceImpl implements UserAccountService {
                         ErrorMessage.USER_NOT_FOUND));
         List<UserAccount> connections = userAccount.getConnection();
         if (connections.contains(connection)) {
+            LOGGER.error("Connection with email : " + connectionEmail
+                    + " is already in network");
             throw new ElementAlreadyExistsException(
                     ErrorMessage.CONNECTION_ALREADY_EXISTS);
         }
         connections.add(connection);
         userAccountDAO.save(userAccount);
+        LOGGER.info("Success to add connection with email "
+                + connectionEmail + "for user id : " + userId);
         return connection;
     }
 
@@ -153,6 +172,8 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     public UserAccount saveDeleteConnectionInUserNetwork(
             final int userId, final int connectionId) {
+        LOGGER.info("Try to delete connection with id : "
+                + connectionId + "for user id : " + userId);
         UserAccount userAccount = userAccountDAO.findById(userId)
                 .orElseThrow(() -> new ElementNotFoundException(
                         ErrorMessage.USER_NOT_FOUND));
@@ -161,11 +182,15 @@ public class UserAccountServiceImpl implements UserAccountService {
                         ErrorMessage.USER_NOT_FOUND));
         List<UserAccount> connections = userAccount.getConnection();
         if (!connections.contains(connection)) {
+            LOGGER.error("Connection with id : " + connectionId
+                    + " is not in network");
             throw new ElementNotFoundException(
                     ErrorMessage.USER_NOT_FOUND);
         }
         connections.remove(connection);
         UserAccount newUserAccount = userAccountDAO.save(userAccount);
+        LOGGER.info("Success to delete connection with id "
+                + connectionId + "for user id : " + userId);
         return newUserAccount;
     }
 
@@ -176,10 +201,12 @@ public class UserAccountServiceImpl implements UserAccountService {
      */
     @Override
     public List<Transfer> findUserTransfers(final int id) {
+        LOGGER.info("Try to find transfer log for user id : " + id);
         UserAccount userAccount = userAccountDAO.findById(id)
                 .orElseThrow(() -> new ElementNotFoundException(
                         ErrorMessage.USER_NOT_FOUND));
         List<Transfer> transfers = userAccount.getTransferLog();
+        LOGGER.info("Success to find transfer log for user id : " + id);
         return transfers;
     }
 
@@ -191,6 +218,7 @@ public class UserAccountServiceImpl implements UserAccountService {
      */
     @Override
     public UserAccount findUserAccountByEmail(final String email) {
+        LOGGER.info("Try to find user account with email " + email);
         return userAccountDAO.findByEmail(email).orElseThrow(
                 () -> new ElementNotFoundException(
                         ErrorMessage.USER_NOT_FOUND));

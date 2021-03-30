@@ -16,7 +16,6 @@ import java.util.List;
 
 @Service
 public class TransferServiceImpl implements TransferService {
-    //TODO : Logger
     /**
      * @see Logger
      */
@@ -55,12 +54,14 @@ public class TransferServiceImpl implements TransferService {
     @Transactional
     @Override
     public Transfer saveTransfer(final Transfer transfer) {
+        LOGGER.info("Try to save following transfer :\t" + transfer.toString());
         UserAccount sender = transfer.getSender();
         UserAccount receiver = transfer.getReceiver();
         double amount = transfer.getAmount();
         double senderBalance = sender.getBalance();
 
         if (amount > senderBalance) {
+            LOGGER.error("Not enough money on user balance");
             throw new NotEnoughMoneyException(ErrorMessage.NOT_ENOUGH_MONEY);
         }
 
@@ -80,6 +81,7 @@ public class TransferServiceImpl implements TransferService {
                 break;
                 default: break;
         }
+        LOGGER.info("Success to save transfer \t" + transfer.toString());
         return transfer;
     }
 
@@ -91,6 +93,7 @@ public class TransferServiceImpl implements TransferService {
      */
     @Override
     public Transfer findTransferById(final int transferId) {
+        LOGGER.info("Try to get transfer with id : " + transferId);
         return transferDAO.findById(transferId).orElseThrow(() ->
                 new ElementNotFoundException(ErrorMessage.TRANSFER_NOT_FOUND));
     }
@@ -103,6 +106,8 @@ public class TransferServiceImpl implements TransferService {
      */
     @Override
     public List<Transfer> findTransferBySender(final UserAccount sender) {
+        LOGGER.info("Try to find all transfer done by user :\t"
+                + sender.toString());
         return transferDAO.findAllBySender(sender);
     }
 
@@ -113,6 +118,7 @@ public class TransferServiceImpl implements TransferService {
      */
     @Override
     public List<Transfer> findAllTransfers() {
+        LOGGER.info("Try to find all transfer in db");
         return transferDAO.findAll();
     }
 }

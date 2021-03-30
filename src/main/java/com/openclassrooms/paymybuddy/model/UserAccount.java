@@ -173,15 +173,6 @@ public class UserAccount {
     }
 
     /**
-     * Setter ID.
-     * ID is auto-generated, should not be accessible.
-     * @param pId to set
-     */
-    private void setId(final int pId) {
-        id = pId;
-    }
-
-    /**
      * Getter first name.
      * @return first name
      */
@@ -323,5 +314,22 @@ public class UserAccount {
      */
     public void setTransferLog(final List<Transfer> pTransferLog) {
         transferLog = pTransferLog;
+    }
+
+    /**
+     * To String.
+     * @return string information
+     */
+    @Override
+    public String toString() {
+        return "UserAccount{"
+                + "id=" + id
+                + ", firstName='" + firstName + '\''
+                + ", lastName='" + lastName + '\''
+                + ", email='" + email + '\''
+                + ", roles=" + roles
+                + ", bankAccount=" + bankAccount
+                + ", balance=" + balance
+                + '}';
     }
 }

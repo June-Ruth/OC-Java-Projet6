@@ -92,4 +92,17 @@ public class SendingTransferDTO {
     public void setAmount(final double pAmount) {
         amount = pAmount;
     }
+
+    /**
+     * To String.
+     * @return string information
+     */
+    @Override
+    public String toString() {
+        return "SendingTransferDTO{"
+                + "receiverEmail='" + receiverEmail + '\''
+                + ", description='" + description + '\''
+                + ", amount=" + amount
+                + '}';
+    }
 }

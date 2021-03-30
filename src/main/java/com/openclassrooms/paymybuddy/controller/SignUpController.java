@@ -23,7 +23,6 @@ import java.util.List;
 @RestController
 @RequestMapping("signup")
 public class SignUpController {
-    //TODO : Logger
     /**
      * @see Logger
      */
@@ -64,6 +63,8 @@ public class SignUpController {
     @PostMapping(consumes = {"application/json"})
     public ResponseEntity<UserAccount> createUserAccount(
             @Valid @RequestBody final UserInfoWithoutBalanceDTO userInfo) {
+        LOGGER.info("Try to create user account with user information :\t"
+                + userInfo.toString());
         Role role = roleService.findRoleByName("ROLE_USER");
         List<Role> userRole = new ArrayList<>();
         userRole.add(role);
@@ -84,7 +85,9 @@ public class SignUpController {
                 .path("/{user_id}")
                 .buildAndExpand(userAccount.getId())
                 .toUri();
-        LOGGER.info("Create user account for user " + userInfo.toString());
+
+        LOGGER.info("Success to create user account with user information : \t"
+                + userInfo.toString());
         return ResponseEntity.created(location).body(userAccount);
     }
 }

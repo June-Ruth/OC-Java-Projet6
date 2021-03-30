@@ -190,4 +190,21 @@ public class TransferInformationFullDto {
     public void setTransferType(final TransferType pTransferType) {
         transferType = pTransferType;
     }
+
+    /**
+     * To String.
+     * @return string information
+     */
+    @Override
+    public String toString() {
+        return "TransferInformationFullDto{"
+                + "sender='" + sender + '\''
+                + ", receiver='" + receiver + '\''
+                + ", description='" + description + '\''
+                + ", date=" + date
+                + ", amount=" + amount
+                + ", fee=" + fee
+                + ", transferType=" + transferType
+                + '}';
+    }
 }

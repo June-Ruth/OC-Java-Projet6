@@ -126,4 +126,18 @@ public class UserInfoWithoutBalanceDTO {
     public void setBankAccount(final BankAccount pBankAccount) {
         bankAccount = pBankAccount;
     }
+
+    /**
+     * To String.
+     * @return string information
+     */
+    @Override
+    public String toString() {
+        return "UserInfoWithoutBalanceDTO{"
+                + "firstName='" + firstName + '\''
+                + ", lastName='" + lastName + '\''
+                + ", email='" + email + '\''
+                + ", bankAccount=" + bankAccount
+                + '}';
+    }
 }
