@@ -1,4 +1,4 @@
-# Pay My Buddy - work in progress
+# Pay My Buddy
 Pay My Buddy allows user to simply transfer money to other friends through the application.
 
 ## Information
